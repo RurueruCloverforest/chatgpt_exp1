@@ -1,12 +1,13 @@
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
     // Create PixiJS application
-    const app = new PIXI.Application({
+    const app = new PIXI.Application();
+    await app.init({
         width: window.innerWidth,
         height: window.innerHeight * 0.9,
         backgroundColor: 0x1099bb,
     });
 
-    document.getElementById('canvas-container').appendChild(app.view);
+    document.getElementById('canvas-container').appendChild(app.canvas);
 
     // Draw a rectangle
     const rectangle = new PIXI.Graphics();
