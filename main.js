@@ -19,4 +19,22 @@ window.addEventListener('DOMContentLoaded', async () => {
     rectangle.y = app.renderer.height / 2 - 50;
 
     app.stage.addChild(rectangle);
+
+    // Load sprite sheet and create an animated sprite
+    const spritesheet = await PIXI.Assets.load('https://pixijs.io/examples/examples/assets/spritesheet/fighter.json');
+
+    const frames = [];
+    for (let i = 0; i < 30; i++) {
+        const frameNumber = i.toString().padStart(4, '0');
+        frames.push(PIXI.Texture.from(`rollSequence${frameNumber}.png`));
+    }
+
+    const anim = new PIXI.AnimatedSprite(frames);
+    anim.anchor.set(0.5);
+    anim.x = app.renderer.width / 2;
+    anim.y = app.renderer.height / 2;
+    anim.animationSpeed = 0.5;
+    anim.play();
+
+    app.stage.addChild(anim);
 });
