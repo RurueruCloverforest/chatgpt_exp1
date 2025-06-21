@@ -48,8 +48,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                     if (reward.reputation) parts.push(`Rep ${reward.reputation}`);
                     rewardTxt = ' (' + parts.join(', ') + ')';
                 }
+                const finalFlag = isTerminalCode(result) ? ' [Final]' : '';
                 const div = document.createElement('div');
-                div.textContent = `${a} + ${b} -> ${result}${rewardTxt}`;
+                div.textContent = `${a} + ${b} -> ${result}${finalFlag}${rewardTxt}`;
                 recipeListEl.appendChild(div);
             }
         }
