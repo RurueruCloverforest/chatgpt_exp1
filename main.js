@@ -15,6 +15,20 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('canvas-container').appendChild(app.canvas);
 
+    const scoreEls = {
+        reputation: document.getElementById('score-reputation'),
+        magic: document.getElementById('score-magic'),
+        money: document.getElementById('score-money'),
+    };
+    const scores = { reputation: 0, magic: 0, money: 0 };
+
+    function updateScores() {
+        scoreEls.reputation.textContent = `Reputation: ${scores.reputation}`;
+        scoreEls.magic.textContent = `Magic: ${scores.magic}`;
+        scoreEls.money.textContent = `Money: ${scores.money}`;
+    }
+    updateScores();
+
     const items = [];
     const itemRadius = 20;
     const itemSpeed = 2;
@@ -129,6 +143,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                         items.splice(j, 1);
                         items.splice(i, 1);
                         spawnItem(resultCode, newX, newY);
+                        scores.reputation += 1;
+                        scores.magic += 1;
+                        scores.money += 1;
+                        updateScores();
                         return; // restart detection next tick
                     } else {
                         // simple velocity swap if no merge rule
