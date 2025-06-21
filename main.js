@@ -22,12 +22,34 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
     const scores = { reputation: 0, magic: 0, money: 0 };
 
+    const endpointRadius = 30;
+    const endpointX = app.renderer.width - endpointRadius - 20;
+    const endpointY = app.renderer.height - endpointRadius - 20;
+    const endpointRewards = {
+        'AA': { money: 1 },
+        'BB': { magic: 1 },
+        'CC': { reputation: 1 },
+        'DD': { money: 2, magic: 1 },
+        'EE': { reputation: 2, magic: 2 }
+    };
+
     function updateScores() {
         scoreEls.reputation.textContent = `Reputation: ${scores.reputation}`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
     }
     updateScores();
+
+    const endpoint = new PIXI.Graphics();
+    endpoint.beginFill(0x444444);
+    endpoint.drawCircle(0, 0, endpointRadius);
+    endpoint.endFill();
+    const endpointLabel = new PIXI.Text('END', { fontSize: 12, fill: 0xffffff });
+    endpointLabel.anchor.set(0.5);
+    endpoint.addChild(endpointLabel);
+    endpoint.x = endpointX;
+    endpoint.y = endpointY;
+    app.stage.addChild(endpoint);
 
     const items = [];
     const itemRadius = 20;
@@ -104,8 +126,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         return [a, b].sort().join('+');
     }
 
+    function atEndpoint(item) {
+        const dx = item.x - endpointX;
+        const dy = item.y - endpointY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        return dist < endpointRadius + itemRadius;
+    }
+
     app.ticker.add(() => {
-        for (const item of items) {
+        for (let i = items.length - 1; i >= 0; i--) {
+            const item = items[i];
             if (mouse.active) {
                 const dx = item.x - mouse.x;
                 const dy = item.y - mouse.y;
@@ -125,6 +155,17 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
             if (item.y - itemRadius < 0 || item.y + itemRadius > app.renderer.height) {
                 item.vy *= -1;
+            }
+
+            if (atEndpoint(item)) {
+                const reward = endpointRewards[item.code] || {};
+                scores.money += reward.money || 0;
+                scores.magic += reward.magic || 0;
+                scores.reputation += reward.reputation || 0;
+                updateScores();
+                app.stage.removeChild(item);
+                items.splice(i, 1);
+                continue;
             }
         }
 
