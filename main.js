@@ -853,6 +853,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         g.y = 0;
 
         const spritePath = `images/item${def.id}.png`;
+        console.log(`Loading icon for item ${def.id} from ${spritePath}`);
         const sprite = PIXI.Sprite.from(spritePath);
         sprite.anchor.set(0.5);
         sprite.width = sprite.height = itemRadius * 2;
@@ -860,6 +861,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Log a helpful error if the image fails to load
         sprite.texture.baseTexture.on('error', (err) => {
             console.error(`Failed to load ${spritePath}:`, err);
+        });
+
+        sprite.texture.baseTexture.on('loaded', () => {
+            console.log(`Loaded ${spritePath}`);
         });
 
         const label = new PIXI.Text(def.code, { fontSize: 12, fill: 0xffffff });
