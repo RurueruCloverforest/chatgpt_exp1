@@ -562,7 +562,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         } else {
             scoreEls.robe.textContent = 'Magic Robe: None';
         }
-        canvasContainer.style.backgroundImage = `url('background${rankIndex + 1}.png')`;
+        canvasContainer.style.backgroundImage = `url('./images/background${rankIndex + 1}.png')`;
         if (typeof refreshShop === 'function') refreshShop();
         if (typeof saveState === 'function') saveState();
     }
