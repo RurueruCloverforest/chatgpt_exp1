@@ -19,6 +19,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         itemMap[def.code] = def;
     }
 
+    function getItemName(code) {
+        const def = itemMap[code];
+        if (!def) return code;
+        if (typeof def.name === 'object') {
+            return def.name[lang] || def.name.en || def.name.ja || code;
+        }
+        return def.name || code;
+    }
+
     const canvasContainer = document.getElementById('canvas-container');
     const app = new PIXI.Application();
     await app.init({
@@ -173,7 +182,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
                 const div = document.createElement('div');
                 div.className = 'reward-item';
-                div.textContent = `${def.name} [${code}] ${count}/${threshold} (${t('reward')}: ${rewardParts.join(', ')})`;
+                div.textContent = `${getItemName(code)} [${code}] ${count}/${threshold} (${t('reward')}: ${rewardParts.join(', ')})`;
                 rewardsEl.appendChild(div);
             });
         }
@@ -193,9 +202,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             itemListEl.innerHTML = '';
             for (const item of items) {
                 const div = document.createElement('div');
-                const def = itemMap[item.code] || {};
-                const name = def.name ? ` - ${def.name}` : '';
-                div.textContent = `#${item.id} [${item.code}]${name}`;
+                const name = getItemName(item.code);
+                const namePart = name ? ` - ${name}` : '';
+                div.textContent = `#${item.id} [${item.code}]${namePart}`;
                 itemListEl.appendChild(div);
             }
         }
@@ -221,10 +230,10 @@ window.addEventListener('DOMContentLoaded', async () => {
                 section.className = 'recipe-section';
 
                 const header = document.createElement('h3');
-                const def = itemMap[result] || { name: result, code: result };
+                const def = itemMap[result] || { name: { en: result, ja: result }, code: result };
                 const earn = itemEarnings[result] || { money: 0, magic: 0, reputation: 0, count: 0 };
                 const earnTxt = ` (${earn.count} made, ${earn.reputation} Rep, ${earn.magic} Mag, $${earn.money})`;
-                header.textContent = `${def.name} [${def.code}]${earnTxt}`;
+                header.textContent = `${getItemName(result)} [${def.code}]${earnTxt}`;
                 section.appendChild(header);
 
                 if (byResult[result].length === 0) {
@@ -243,9 +252,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                         if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
                         const costTxt = cost ? ` ${t('cost')}: ${cost} Mag` : '';
                         const finalFlag = isTerminalCode(result) ? ` (${t('finalFlag')})` : '';
-                        const aName = itemMap[a]?.name || a;
-                        const bName = itemMap[b]?.name || b;
-                        let txt = `${aName} [${a}] + ${bName} [${b}] -> ${def.name}${finalFlag}`;
+                        const aName = getItemName(a);
+                        const bName = getItemName(b);
+                        let txt = `${aName} [${a}] + ${bName} [${b}] -> ${getItemName(result)}${finalFlag}`;
                         if (rewardParts.length || cost) {
                             txt += ` (${t('reward')}: ${rewardParts.join(', ')}${cost ? ';' + costTxt : ''})`;
                         }
@@ -307,9 +316,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         function getRecipesTooltip(recipes) {
             return Object.entries(recipes).map(([k, v]) => {
                 const [a, b] = k.split('+');
-                const aName = itemMap[a]?.name || a;
-                const bName = itemMap[b]?.name || b;
-                const resultName = itemMap[v]?.name || v;
+                const aName = getItemName(a);
+                const bName = getItemName(b);
+                const resultName = getItemName(v);
                 return `${aName} [${a}] + ${bName} [${b}] -> ${resultName} [${v}]`;
             }).join('\n');
         }
