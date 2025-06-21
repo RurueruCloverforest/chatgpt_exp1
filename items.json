@@ -1,14 +1,14 @@
 [
-  {"id":1, "code":"AA", "color":"#ff5555"},
-  {"id":2, "code":"BB", "color":"#55ff55"},
-  {"id":3, "code":"CC", "color":"#5555ff"},
-  {"id":4, "code":"DD", "color":"#ffff55"},
-  {"id":5, "code":"EE", "color":"#ff55ff"},
-  {"id":6, "code":"FF", "color":"#55ffff"},
-  {"id":7, "code":"GG", "color":"#ffaa00"},
-  {"id":8, "code":"HH", "color":"#8888ff"},
-  {"id":9, "code":"II", "color":"#dd4477"},
-  {"id":10, "code":"JJ", "color":"#77dd44"},
-  {"id":11, "code":"KK", "color":"#ff8800"},
-  {"id":12, "code":"LL", "color":"#00aaff"}
+  {"id":1, "code":"AA", "name":"Sparkling Dew", "color":"#ff5555"},
+  {"id":2, "code":"BB", "name":"Moonlit Petal", "color":"#55ff55"},
+  {"id":3, "code":"CC", "name":"Sun Crystal", "color":"#5555ff"},
+  {"id":4, "code":"DD", "name":"Arcane Shard", "color":"#ffff55"},
+  {"id":5, "code":"EE", "name":"Mystic Orb", "color":"#ff55ff"},
+  {"id":6, "code":"FF", "name":"Stardust Core", "color":"#55ffff"},
+  {"id":7, "code":"GG", "name":"Ethereal Bloom", "color":"#ffaa00"},
+  {"id":8, "code":"HH", "name":"Celestial Tear", "color":"#8888ff"},
+  {"id":9, "code":"II", "name":"Faerie Feather", "color":"#dd4477"},
+  {"id":10, "code":"JJ", "name":"Dragon Scale", "color":"#77dd44"},
+  {"id":11, "code":"KK", "name":"Pixie Wing", "color":"#ff8800"},
+  {"id":12, "code":"LL", "name":"Luminous Pearl", "color":"#00aaff"}
 ]
