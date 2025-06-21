@@ -552,8 +552,14 @@ window.addEventListener('DOMContentLoaded', async () => {
             refreshChronicle();
         }
         currentRankIndex = rankIndex;
+        let nextText = '';
+        const nextRank = reputationRanks[rankIndex + 1];
+        if (nextRank) {
+            const toNext = nextRank.threshold - scores.reputation;
+            nextText = ` Next: ${toNext}`;
+        }
         scoreEls.reputation.textContent =
-            `Reputation: ${scores.reputation} (Lv${rankIndex + 1} ${label})`;
+            `Reputation: ${scores.reputation} (Lv${rankIndex + 1} ${label})${nextText}`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
         if (equippedRobe >= 0) {
