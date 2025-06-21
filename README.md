@@ -36,9 +36,9 @@ visible.
 
 If an icon doesn't load despite being reachable in your browser, open the
 included `image-test.html` file. Add a query parameter like
-`?path=images/item3.png` to have PixiJS attempt to load that image and report the
-result in the console. This helps verify whether PixiJS can access the image at
-all.
+`?path=images/item3.png` to have PixiJS (v8) load that image using the new
+`PIXI.Assets` API and report the result in the console. This helps verify whether
+the engine can access the image at all.
 
 If needed, you can change how long the game waits before warning about a
 missing icon. Adjust the `imageLoadWarningDelay` constant near the item setup in
@@ -63,4 +63,4 @@ python3 -m http.server
 ```
 
 Then navigate to the shown address (e.g. `http://localhost:3000`) and open
-`index.html` there. PixiJS is loaded from a CDN so no build step is required.
+`index.html` there. PixiJS v8 is loaded from a CDN so no build step is required.

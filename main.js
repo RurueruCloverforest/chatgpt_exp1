@@ -855,38 +855,31 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const spritePath = `images/item${def.id}.png`;
         console.log(`Loading icon for item ${def.id} from ${spritePath}`);
-        const sprite = PIXI.Sprite.from(spritePath);
+
+        const sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
         sprite.anchor.set(0.5);
         sprite.width = sprite.height = itemRadius * 2;
         sprite.mask = g;
-        // Log if the image fails to load
-        sprite.texture.baseTexture.on('error', (err) => {
+
+        const warnTimeout = setTimeout(() => {
+            if (!sprite.texture.baseTexture.valid) {
+                console.warn(`Image still not loaded after delay: ${spritePath}`);
+            }
+        }, imageLoadWarningDelay);
+
+        PIXI.Assets.load(spritePath).then((texture) => {
+            clearTimeout(warnTimeout);
+            sprite.texture = texture;
+            console.log(`Loaded ${spritePath} (${texture.width}x${texture.height})`);
+            label.visible = false;
+        }).catch((err) => {
+            clearTimeout(warnTimeout);
             console.error(`Failed to load ${spritePath}:`, err);
         });
-
-        sprite.texture.baseTexture.on('loaded', () => {
-            console.log(`Loaded ${spritePath} (${sprite.texture.width}x${sprite.texture.height})`);
-        });
-
-        // Warn if the texture never finishes loading
-        if (!sprite.texture.baseTexture.valid) {
-            setTimeout(() => {
-                if (!sprite.texture.baseTexture.valid) {
-                    console.warn(`Image still not loaded after delay: ${spritePath}`);
-                }
-            }, imageLoadWarningDelay);
-        }
 
         const label = new PIXI.Text(def.code, { fontSize: 12, fill: 0xffffff });
         label.anchor.set(0.5);
         // Hide the fallback code label once the sprite loads successfully
-        if (sprite.texture.baseTexture.valid) {
-            label.visible = false;
-        } else {
-            sprite.texture.baseTexture.on('loaded', () => {
-                label.visible = false;
-            });
-        }
 
         container.addChild(g);
         container.addChild(sprite);

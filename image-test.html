@@ -11,11 +11,9 @@
     const params = new URLSearchParams(location.search);
     const path = params.get('path') || 'images/item1.png';
     console.log('Testing image:', path);
-    const base = PIXI.BaseTexture.from(path);
-    base.on('loaded', () => {
-      console.log('Loaded:', path, base.width + 'x' + base.height);
-    });
-    base.on('error', err => {
+    PIXI.Assets.load(path).then(texture => {
+      console.log('Loaded:', path, texture.width + 'x' + texture.height);
+    }).catch(err => {
       console.error('Error loading', path, err);
     });
   </script>
