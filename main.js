@@ -81,11 +81,20 @@ window.addEventListener('DOMContentLoaded', async () => {
         const itemListEl = document.getElementById('item-list');
         const recipeListEl = document.getElementById('recipe-list');
         const shopEl = document.getElementById('shop');
+        const rewardsEl = document.getElementById('rewards');
         const infoPane = document.getElementById('info-pane');
         const chronicleEl = document.getElementById('chronicle');
         let chronicleEntries = [];
         const itemEarnings = {};
+        const rewardProgress = {};
         let currentRankIndex = 0;
+
+        const baseRewardThresholds = [1, 5, 10, 20];
+
+        function getRewardThreshold(index) {
+            if (index < baseRewardThresholds.length) return baseRewardThresholds[index];
+            return baseRewardThresholds[baseRewardThresholds.length - 1] * Math.pow(2, index - baseRewardThresholds.length + 1);
+        }
 
         function refreshChronicle() {
             chronicleEl.innerHTML = '';
@@ -94,6 +103,35 @@ window.addEventListener('DOMContentLoaded', async () => {
                 div.textContent = `${entry.time} - Lv${entry.level} ${entry.label}`;
                 chronicleEl.appendChild(div);
             });
+        }
+
+        function refreshRewards() {
+            rewardsEl.innerHTML = '';
+            Object.keys(itemMap).forEach(code => {
+                const def = itemMap[code];
+                const count = itemEarnings[code]?.count || 0;
+                const progress = rewardProgress[code] || 0;
+                const threshold = getRewardThreshold(progress);
+                const reward = endpointRewards[code] || {};
+                const rewardParts = [];
+                if (reward.money) rewardParts.push(`$${reward.money}`);
+                if (reward.magic) rewardParts.push(`${reward.magic} Mag`);
+                if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
+                const div = document.createElement('div');
+                div.textContent = `${def.name} [${code}] ${count}/${threshold} (Reward: ${rewardParts.join(', ')})`;
+                rewardsEl.appendChild(div);
+            });
+        }
+
+        function checkRewards(code) {
+            const progress = rewardProgress[code] || 0;
+            const threshold = getRewardThreshold(progress);
+            if ((itemEarnings[code]?.count || 0) >= threshold) {
+                rewardProgress[code] = progress + 1;
+                awardForCode(code);
+                refreshRewards();
+                if (typeof saveState === 'function') saveState();
+            }
         }
 
         function refreshItemList() {
@@ -242,6 +280,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 purchasedRecipeBooks,
                 chronicle: chronicleEntries,
                 itemEarnings,
+                rewards: rewardProgress,
                 gatherSites: gatherSites.map(site => ({
                     purchased: site.purchased,
                     active: site.active
@@ -281,6 +320,12 @@ window.addEventListener('DOMContentLoaded', async () => {
                         };
                     });
                 }
+                if (data.rewards) {
+                    Object.entries(data.rewards).forEach(([k, v]) => {
+                        rewardProgress[k] = v;
+                    });
+                }
+                refreshRewards();
                 if (Array.isArray(data.gatherSites)) {
                     data.gatherSites.forEach((siteData, idx) => {
                         const site = gatherSites[idx];
@@ -510,6 +555,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     currentRankIndex = getReputationIndex(scores.reputation);
     refreshChronicle();
     updateScores();
+    refreshRewards();
     updateGameTime();
 
     setInterval(() => {
@@ -545,6 +591,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
         itemEarnings[code].count += 1;
         refreshRecipeList();
+        checkRewards(code);
+        refreshRewards();
         const container = new PIXI.Container();
 
         const g = new PIXI.Graphics();
@@ -669,7 +717,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                         if (isTerminalCode(resultCode)) {
                             awardForCode(resultCode, 1);
+                            checkRewards(resultCode);
                             refreshItemList();
+                            refreshRewards();
                         } else {
                             spawnItem(resultCode, newX, newY);
                         }
@@ -702,5 +752,6 @@ window.addEventListener('DOMContentLoaded', async () => {
       spawnItem(randomBaseCode());
       refreshRecipeList();
       refreshShop();
+      refreshRewards();
       infoPane.classList.toggle('show-video', document.querySelector('.tab-button.active').dataset.tab === 'character');
   });
