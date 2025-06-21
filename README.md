@@ -16,7 +16,7 @@ You can also open the **Shop** tab to buy recipe books which unlock extra merge
 combinations. All recipe books are listed vertically in the shop. Once
 purchased, a book's button is greyed out and disabled. Multiple books can be
 purchased over time, each introducing new recipes that lead to higher tier
-items. As your reputation increases you can purchase several **Gathering
+items. As your reputation increases you can purchase up to five **Gathering
 Sites**. These sites periodically generate unique items and can be toggled on or
 off. Game progress such as your resources and shop purchases is saved to a
 cookie so you can continue later.
