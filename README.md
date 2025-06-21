@@ -19,7 +19,8 @@ purchased over time, each introducing new recipes that lead to higher tier
 items. As your reputation increases you can purchase up to five **Gathering
 Sites**. These sites periodically generate unique items and can be toggled on or
 off. Game progress such as your resources and shop purchases is saved to a
-cookie so you can continue later.
+cookie so you can continue later. A new **Chronicle** tab records the time
+whenever your reputation rank increases.
 
 The background image of the game area changes depending on your reputation
 rank. Place images named `background1.png`, `background2.png`, ... alongside the

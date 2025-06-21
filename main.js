@@ -82,6 +82,18 @@ window.addEventListener('DOMContentLoaded', async () => {
         const recipeListEl = document.getElementById('recipe-list');
         const shopEl = document.getElementById('shop');
         const infoPane = document.getElementById('info-pane');
+        const chronicleEl = document.getElementById('chronicle');
+        let chronicleEntries = [];
+        let currentRankIndex = 0;
+
+        function refreshChronicle() {
+            chronicleEl.innerHTML = '';
+            chronicleEntries.forEach(entry => {
+                const div = document.createElement('div');
+                div.textContent = `${entry.time} - Lv${entry.level} ${entry.label}`;
+                chronicleEl.appendChild(div);
+            });
+        }
 
         function refreshItemList() {
             itemListEl.innerHTML = '';
@@ -212,6 +224,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const data = {
                 scores,
                 purchasedRecipeBooks,
+                chronicle: chronicleEntries,
                 gatherSites: gatherSites.map(site => ({
                     purchased: site.purchased,
                     active: site.active
@@ -237,6 +250,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                     for (let i = 0; i < purchasedRecipeBooks; i++) {
                         Object.entries(recipeBooks[i].recipes).forEach(([k, v]) => { mergeRules[k] = v; });
                     }
+                }
+                if (Array.isArray(data.chronicle)) {
+                    chronicleEntries = data.chronicle;
                 }
                 if (Array.isArray(data.gatherSites)) {
                     data.gatherSites.forEach((siteData, idx) => {
@@ -383,6 +399,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     function updateScores() {
         const rankIndex = getReputationIndex(scores.reputation);
         const label = getReputationLabel(scores.reputation);
+        if (rankIndex > currentRankIndex) {
+            chronicleEntries.push({
+                level: rankIndex + 1,
+                label,
+                time: formatGameTime(gameTime)
+            });
+            refreshChronicle();
+        }
+        currentRankIndex = rankIndex;
         scoreEls.reputation.textContent =
             `Reputation: ${scores.reputation} (Lv${rankIndex + 1} ${label})`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
@@ -445,6 +470,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 
     loadState();
+    currentRankIndex = getReputationIndex(scores.reputation);
+    refreshChronicle();
     updateScores();
     updateGameTime();
 
