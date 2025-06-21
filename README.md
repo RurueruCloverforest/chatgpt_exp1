@@ -34,6 +34,10 @@ the `id` field of the corresponding item in `items.json`. When an image is
 available, the item code label will automatically be hidden so only your icon is
 visible.
 
+If needed, you can change how long the game waits before warning about a
+missing icon. Adjust the `imageLoadWarningDelay` constant near the item setup in
+`main.js` to set a new timeout in milliseconds.
+
 ## How to run
 
 Because the game loads `items.json` via `fetch`, you need to run it from an
