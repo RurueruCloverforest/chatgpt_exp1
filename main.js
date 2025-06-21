@@ -181,7 +181,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         const gatherSites = [
             { repRequirement: 5, itemCodes: ['KK', 'LL'], interval: 3000, purchased: false, active: false, timerId: null },
             { repRequirement: 20, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null },
-            { repRequirement: 50, itemCodes: ['OO', 'PP'], interval: 5000, purchased: false, active: false, timerId: null }
+            { repRequirement: 50, itemCodes: ['OO', 'PP'], interval: 5000, purchased: false, active: false, timerId: null },
+            // New gathering sites with a small selection of items each
+            { repRequirement: 100, itemCodes: ['QQ', 'RR', 'SS'], interval: 6000, purchased: false, active: false, timerId: null },
+            { repRequirement: 150, itemCodes: ['TT', 'UU', 'VV'], interval: 7000, purchased: false, active: false, timerId: null }
         ];
 
         const SAVE_KEY = 'mergeGameState';
