@@ -1,4 +1,11 @@
 window.addEventListener('DOMContentLoaded', async () => {
+    const response = await fetch('items.json');
+    const itemDefinitions = await response.json();
+    const itemMap = {};
+    for (const def of itemDefinitions) {
+        itemMap[def.code] = def;
+    }
+
     const app = new PIXI.Application();
     await app.init({
         width: window.innerWidth,
@@ -16,6 +23,17 @@ window.addEventListener('DOMContentLoaded', async () => {
     const repulsionStrength = 0.2;
     const mouse = { x: 0, y: 0, active: false };
 
+    const mergeRules = {
+        'AA+AA': 'BB',
+        'AA+BB': 'CC',
+        'BB+BB': 'CC',
+        'CC+CC': 'DD',
+        'BB+CC': 'DD',
+        'DD+DD': 'EE'
+    };
+
+    let nextItemId = 1;
+
     app.canvas.addEventListener('mousemove', (e) => {
         const rect = app.canvas.getBoundingClientRect();
         mouse.x = e.clientX - rect.left;
@@ -26,29 +44,46 @@ window.addEventListener('DOMContentLoaded', async () => {
     app.canvas.addEventListener('mouseup', () => { mouse.active = false; });
     app.canvas.addEventListener('mouseleave', () => { mouse.active = false; });
 
-    function colorForLevel(level) {
-        const colors = [0xff5555, 0x55ff55, 0x5555ff, 0xffff55, 0xff55ff, 0x55ffff];
-        return colors[(level - 1) % colors.length];
+    function colorForCode(code) {
+        const def = itemMap[code];
+        return PIXI.Color.string2hex(def.color);
     }
 
-    function spawnItem(level = 1, x = app.renderer.width / 2, y = app.renderer.height / 2) {
+    function spawnItem(code = 'AA', x = app.renderer.width / 2, y = app.renderer.height / 2) {
+        const def = itemMap[code];
+        const container = new PIXI.Container();
+
         const g = new PIXI.Graphics();
-        g.beginFill(colorForLevel(level));
+        g.beginFill(colorForCode(code));
         g.drawCircle(0, 0, itemRadius);
         g.endFill();
-        g.x = x;
-        g.y = y;
-        g.vx = (Math.random() - 0.5) * itemSpeed * 2;
-        g.vy = (Math.random() - 0.5) * itemSpeed * 2;
-        g.level = level;
-        app.stage.addChild(g);
-        items.push(g);
+        g.x = 0;
+        g.y = 0;
+
+        const label = new PIXI.Text(def.code, {fontSize: 12, fill: 0xffffff});
+        label.anchor.set(0.5);
+
+        container.addChild(g);
+        container.addChild(label);
+        container.x = x;
+        container.y = y;
+        container.vx = (Math.random() - 0.5) * itemSpeed * 2;
+        container.vy = (Math.random() - 0.5) * itemSpeed * 2;
+        container.code = code;
+        container.id = nextItemId++;
+
+        app.stage.addChild(container);
+        items.push(container);
     }
 
     function isColliding(a, b) {
         const dx = a.x - b.x;
         const dy = a.y - b.y;
         return Math.sqrt(dx * dx + dy * dy) < itemRadius * 2;
+    }
+
+    function mergeKey(a, b) {
+        return [a, b].sort().join('+');
     }
 
     app.ticker.add(() => {
@@ -80,18 +115,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const a = items[i];
                 const b = items[j];
                 if (isColliding(a, b)) {
-                    if (a.level === b.level) {
-                        const newLevel = a.level + 1;
+                    const key = mergeKey(a.code, b.code);
+                    const resultCode = mergeRules[key];
+                    if (resultCode) {
                         const newX = (a.x + b.x) / 2;
                         const newY = (a.y + b.y) / 2;
                         app.stage.removeChild(a);
                         app.stage.removeChild(b);
                         items.splice(j, 1);
                         items.splice(i, 1);
-                        spawnItem(newLevel, newX, newY);
+                        spawnItem(resultCode, newX, newY);
                         return; // restart detection next tick
                     } else {
-                        // simple velocity swap for different levels
+                        // simple velocity swap if no merge rule
                         const tvx = a.vx; const tvy = a.vy;
                         a.vx = b.vx; a.vy = b.vy;
                         b.vx = tvx; b.vy = tvy;
@@ -101,9 +137,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    function randomBaseCode() {
+        const bases = ['AA', 'BB'];
+        return bases[Math.floor(Math.random() * bases.length)];
+    }
+
     setInterval(() => {
-        spawnItem();
+        spawnItem(randomBaseCode());
     }, 1000);
 
-    spawnItem();
+    spawnItem(randomBaseCode());
 });
