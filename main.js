@@ -139,6 +139,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             }, 3000);
         }
 
+        function stopGatherSite() {
+            if (!gatherIntervalId) return;
+            clearInterval(gatherIntervalId);
+            gatherIntervalId = null;
+        }
+
         function randomGatherCode() {
             return gatherItemCodes[Math.floor(Math.random() * gatherItemCodes.length)];
         }
@@ -161,8 +167,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             const gatherBtn = document.createElement('button');
             if (gatherSitePurchased) {
-                gatherBtn.textContent = 'Gathering Site Purchased';
-                gatherBtn.disabled = true;
+                gatherBtn.textContent = 'Gathering Site Active (click to disable)';
+                gatherBtn.disabled = false;
+                gatherBtn.addEventListener('click', () => {
+                    gatherSitePurchased = false;
+                    stopGatherSite();
+                    refreshShop();
+                    if (typeof saveState === 'function') saveState();
+                });
             } else {
                 gatherBtn.textContent = `Buy Gathering Site (requires ${gatherRepRequirement} Rep)`;
                 gatherBtn.disabled = scores.reputation < gatherRepRequirement;
