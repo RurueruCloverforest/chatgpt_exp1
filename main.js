@@ -852,10 +852,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         g.x = 0;
         g.y = 0;
 
-        const sprite = PIXI.Sprite.from(`images/item${def.id}.png`);
+        const spritePath = `images/item${def.id}.png`;
+        const sprite = PIXI.Sprite.from(spritePath);
         sprite.anchor.set(0.5);
         sprite.width = sprite.height = itemRadius * 2;
         sprite.mask = g;
+        // Log a helpful error if the image fails to load
+        sprite.texture.baseTexture.on('error', (err) => {
+            console.error(`Failed to load ${spritePath}:`, err);
+        });
 
         const label = new PIXI.Text(def.code, { fontSize: 12, fill: 0xffffff });
         label.anchor.set(0.5);
