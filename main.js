@@ -1,6 +1,19 @@
 window.addEventListener('DOMContentLoaded', async () => {
-    const response = await fetch('items.json');
-    const itemDefinitions = await response.json();
+    const [itemRes, textRes] = await Promise.all([
+        fetch('items.json'),
+        fetch('text.json')
+    ]);
+    const itemDefinitions = await itemRes.json();
+    const texts = await textRes.json();
+    let lang = localStorage.getItem('lang') || 'ja';
+
+    function t(id, params = {}) {
+        let str = texts[id]?.[lang] || texts[id]?.ja || texts[id]?.en || id;
+        for (const [k, v] of Object.entries(params)) {
+            str = str.replace(`{${k}}`, v);
+        }
+        return str;
+    }
     const itemMap = {};
     for (const def of itemDefinitions) {
         itemMap[def.code] = def;
@@ -26,6 +39,40 @@ window.addEventListener('DOMContentLoaded', async () => {
       };
       const scores = { reputation: 0, magic: 0, money: 0 };
 
+      function refreshStaticText() {
+          document.getElementById('text-title').textContent = t('gameTitle');
+          document.getElementById('text-header').textContent = t('gameTitle');
+          document.getElementById('text-desc').textContent = t('gameDescription');
+          document.getElementById('tab-items').textContent = t('tabItems');
+          document.getElementById('tab-recipes').textContent = t('tabRecipes');
+          document.getElementById('tab-shop').textContent = t('tabShop');
+          document.getElementById('tab-rewards').textContent = t('tabRewards');
+          document.getElementById('tab-character').textContent = t('tabCharacter');
+          document.getElementById('tab-chronicle').textContent = t('tabChronicle');
+          document.getElementById('tab-system').textContent = t('tabSystem');
+          document.getElementById('system-warning').textContent = t('systemWarning');
+          document.getElementById('clear-progress-btn').textContent = t('clearProgress');
+          document.getElementById('lang-label').textContent = t('languageLabel') + ':';
+      }
+
+      const langSelect = document.getElementById('lang-select');
+      if (langSelect) {
+          langSelect.value = lang;
+          langSelect.addEventListener('change', () => {
+              lang = langSelect.value;
+              localStorage.setItem('lang', lang);
+            refreshStaticText();
+            updateScores();
+            updateGameTime();
+            refreshRecipeList();
+            refreshShop();
+            refreshRewards();
+        });
+      }
+
+    refreshStaticText();
+    updateGameTime();
+
       const gameTimeEl = document.getElementById('game-time');
       const gameStartTime = new Date(1000, 3, 1, 9, 0, 0);
       let gameTime = new Date(gameStartTime.getTime());
@@ -36,7 +83,11 @@ window.addEventListener('DOMContentLoaded', async () => {
           const d = String(dt.getDate()).padStart(2, '0');
           const hh = String(dt.getHours()).padStart(2, '0');
           const mm = String(dt.getMinutes()).padStart(2, '0');
-          return `${y}年${m}月${d}日${hh}:${mm}`;
+          if (lang === 'ja') {
+              return `${y}年${m}月${d}日${hh}:${mm}`;
+          } else {
+              return `${y}/${m}/${d} ${hh}:${mm}`;
+          }
       }
 
       function updateGameTime() {
@@ -44,23 +95,25 @@ window.addEventListener('DOMContentLoaded', async () => {
       }
 
         const reputationRanks = [
-            { threshold: 0, label: '無名の錬金術師' },
-            { threshold: 15, label: '見習い錬金術師' },
-            { threshold: 30, label: '町外れの調合士' },
-            { threshold: 60, label: '怪しい小屋の錬金術師' },
-            { threshold: 100, label: '地元で評判の錬金術師' },
-            { threshold: 150, label: '一流錬金術師' },
-            { threshold: 220, label: '名高い錬金マスター' },
-            { threshold: 320, label: '王国御用達錬金術師' },
-            { threshold: 450, label: '伝説の錬金術師' },
-            { threshold: 600, label: '錬金術の神髄' }
+            { threshold: 0, label: () => t('rank0') },
+            { threshold: 15, label: () => t('rank1') },
+            { threshold: 30, label: () => t('rank2') },
+            { threshold: 60, label: () => t('rank3') },
+            { threshold: 100, label: () => t('rank4') },
+            { threshold: 150, label: () => t('rank5') },
+            { threshold: 220, label: () => t('rank6') },
+            { threshold: 320, label: () => t('rank7') },
+            { threshold: 450, label: () => t('rank8') },
+            { threshold: 600, label: () => t('rank9') }
         ];
 
+        updateScores();
+
       function getReputationLabel(value) {
-          let label = reputationRanks[0].label;
+          let label = reputationRanks[0].label();
           for (const rank of reputationRanks) {
               if (value >= rank.threshold) {
-                  label = rank.label;
+                  label = rank.label();
               } else {
                   break;
               }
@@ -121,7 +174,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
                 const div = document.createElement('div');
                 div.className = 'reward-item';
-                div.textContent = `${def.name} [${code}] ${count}/${threshold} (Reward: ${rewardParts.join(', ')})`;
+                div.textContent = `${def.name} [${code}] ${count}/${threshold} (${t('reward')}: ${rewardParts.join(', ')})`;
                 rewardsEl.appendChild(div);
             });
         }
@@ -177,7 +230,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 if (byResult[result].length === 0) {
                     const line = document.createElement('div');
-                    line.textContent = 'No known recipe';
+                    line.textContent = t('noRecipe');
                     line.className = 'recipe-line';
                     section.appendChild(line);
                 } else {
@@ -189,13 +242,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                         if (reward.money) rewardParts.push(`$${reward.money}`);
                         if (reward.magic) rewardParts.push(`${reward.magic} Mag`);
                         if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
-                        const costTxt = cost ? ` Cost: ${cost} Mag` : '';
-                        const finalFlag = isTerminalCode(result) ? ' (Final)' : '';
+                        const costTxt = cost ? ` ${t('cost')}: ${cost} Mag` : '';
+                        const finalFlag = isTerminalCode(result) ? ` (${t('finalFlag')})` : '';
                         const aName = itemMap[a]?.name || a;
                         const bName = itemMap[b]?.name || b;
                         let txt = `${aName} [${a}] + ${bName} [${b}] -> ${def.name}${finalFlag}`;
                         if (rewardParts.length || cost) {
-                            txt += ` (Reward: ${rewardParts.join(', ')}${cost ? ';' + costTxt : ''})`;
+                            txt += ` (${t('reward')}: ${rewardParts.join(', ')}${cost ? ';' + costTxt : ''})`;
                         }
                         line.textContent = txt;
                         line.className = 'recipe-line';
@@ -410,11 +463,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const btn = document.createElement('button');
                 btn.className = 'shop-button';
                 if (idx < purchasedRecipeBooks) {
-                    btn.textContent = `Recipe Book ${idx + 1} Purchased`;
+                    btn.textContent = t('recipeBookPurchased', { num: idx + 1 });
                     btn.disabled = true;
                     btn.classList.add('purchased');
                 } else {
-                    btn.textContent = `Buy Recipe Book ${idx + 1} ($${book.cost})`;
+                    btn.textContent = t('recipeBookBuy', { num: idx + 1, cost: book.cost });
                     btn.title = getRecipesTooltip(book.recipes);
                     btn.disabled = scores.money < book.cost;
                     btn.addEventListener('click', () => {
@@ -435,14 +488,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                 btn.className = 'shop-button';
                 if (site.purchased) {
                     if (site.active) {
-                        btn.textContent = `Gather Site ${idx + 1} Active (click to disable)`;
+                        btn.textContent = t('gatherActive', { num: idx + 1 });
                         btn.addEventListener('click', () => {
                             stopGatherSite(idx);
                             refreshShop();
                             if (typeof saveState === 'function') saveState();
                         });
                     } else {
-                        btn.textContent = `Gather Site ${idx + 1} Inactive (click to enable)`;
+                        btn.textContent = t('gatherInactive', { num: idx + 1 });
                         btn.addEventListener('click', () => {
                             startGatherSite(idx);
                             refreshShop();
@@ -451,7 +504,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     }
                     btn.disabled = false;
                 } else {
-                    btn.textContent = `Buy Gather Site ${idx + 1} (requires ${site.repRequirement} Rep)`;
+                    btn.textContent = t('gatherBuy', { num: idx + 1, rep: site.repRequirement });
                     btn.disabled = scores.reputation < site.repRequirement;
                     btn.addEventListener('click', () => {
                         if (scores.reputation < site.repRequirement) return;
@@ -467,7 +520,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const btn = document.createElement('button');
                 btn.className = 'shop-button';
                 if (!robe.purchased) {
-                    btn.textContent = `Buy ${robe.name} ($${robe.cost})`;
+                    btn.textContent = t('buyRobe', { name: robe.name, cost: robe.cost });
                     btn.disabled = scores.money < robe.cost;
                     btn.addEventListener('click', () => {
                         if (scores.money < robe.cost) return;
@@ -478,13 +531,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                     });
                 } else {
                     if (equippedRobe === idx) {
-                        btn.textContent = `${robe.name} Equipped (click to unequip)`;
+                        btn.textContent = t('robeEquipped', { name: robe.name });
                         btn.addEventListener('click', () => {
                             equipRobe(-1);
                             refreshShop();
                         });
                     } else {
-                        btn.textContent = `Equip ${robe.name} (+${robe.effect} Mag/10s)`;
+                        btn.textContent = t('robeEquip', { name: robe.name, effect: robe.effect });
                         btn.addEventListener('click', () => {
                             equipRobe(idx);
                             refreshShop();
@@ -557,17 +610,21 @@ window.addEventListener('DOMContentLoaded', async () => {
         const nextRank = reputationRanks[rankIndex + 1];
         if (nextRank) {
             const toNext = nextRank.threshold - scores.reputation;
-            nextText = ` Next: ${toNext}`;
+            nextText = t('nextPrefix', { value: toNext });
         }
-        scoreEls.reputation.textContent =
-            `Reputation: ${scores.reputation} (Lv${rankIndex + 1} ${label})${nextText}`;
-        scoreEls.magic.textContent = `Magic: ${scores.magic}`;
-        scoreEls.money.textContent = `Money: ${scores.money}`;
+        scoreEls.reputation.textContent = t('scoreReputation', {
+            value: scores.reputation,
+            level: rankIndex + 1,
+            label,
+            next: nextText
+        });
+        scoreEls.magic.textContent = t('scoreMagic', { value: scores.magic });
+        scoreEls.money.textContent = t('scoreMoney', { value: scores.money });
         if (equippedRobe >= 0) {
             const r = magicRobes[equippedRobe];
-            scoreEls.robe.textContent = `Magic Robe: ${r.name} (+${r.effect} Mag/10s)`;
+            scoreEls.robe.textContent = t('scoreRobe', { name: r.name, effect: r.effect });
         } else {
-            scoreEls.robe.textContent = 'Magic Robe: None';
+            scoreEls.robe.textContent = t('scoreRobeNone');
         }
         canvasContainer.style.backgroundImage = `url('background${rankIndex + 1}.png')`;
         if (typeof refreshShop === 'function') refreshShop();
