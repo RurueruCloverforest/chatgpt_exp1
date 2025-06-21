@@ -21,6 +21,14 @@ body {
     background-position: center;
 }
 
+#canvas-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 80, 0.3);
+    pointer-events: none;
+}
+
 #scoreboard {
     position: absolute;
     top: 0;
