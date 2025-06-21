@@ -335,7 +335,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             `Reputation: ${scores.reputation} (Lv${rankIndex + 1} ${label})`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
-        const rankIndex = getReputationIndex(scores.reputation);
         canvasContainer.style.backgroundImage = `url('./images/background${rankIndex + 1}.png')`;
         if (typeof refreshShop === 'function') refreshShop();
         if (typeof saveState === 'function') saveState();
