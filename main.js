@@ -39,8 +39,17 @@ window.addEventListener('DOMContentLoaded', async () => {
             recipeListEl.innerHTML = '';
             for (const [key, result] of Object.entries(mergeRules)) {
                 const [a, b] = key.split('+');
+                const reward = endpointRewards[result];
+                let rewardTxt = '';
+                if (reward) {
+                    const parts = [];
+                    if (reward.money) parts.push(`$${reward.money}`);
+                    if (reward.magic) parts.push(`Mag ${reward.magic}`);
+                    if (reward.reputation) parts.push(`Rep ${reward.reputation}`);
+                    rewardTxt = ' (' + parts.join(', ') + ')';
+                }
                 const div = document.createElement('div');
-                div.textContent = `${a} + ${b} -> ${result}`;
+                div.textContent = `${a} + ${b} -> ${result}${rewardTxt}`;
                 recipeListEl.appendChild(div);
             }
         }
@@ -76,9 +85,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     endpoint.beginFill(0x444444);
     endpoint.drawCircle(0, 0, endpointRadius);
     endpoint.endFill();
-    const endpointLabel = new PIXI.Text('END', { fontSize: 12, fill: 0xffffff });
-    endpointLabel.anchor.set(0.5);
-    endpoint.addChild(endpointLabel);
     endpoint.x = endpointX;
     endpoint.y = endpointY;
     app.stage.addChild(endpoint);
