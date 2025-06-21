@@ -46,7 +46,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function colorForCode(code) {
         const def = itemMap[code];
-        return PIXI.Color.string2hex(def.color);
+        // PIXI v8 no longer exposes `Color.string2hex`, but the util helper
+        // `PIXI.utils.string2hex` is still available to convert a color string
+        // like "#ff00ff" into a numeric hex value.
+        return PIXI.utils.string2hex(def.color);
     }
 
     function spawnItem(code = 'AA', x = app.renderer.width / 2, y = app.renderer.height / 2) {
