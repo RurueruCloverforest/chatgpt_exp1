@@ -72,7 +72,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         'BB': { magic: 1 },
         'CC': { reputation: 1 },
         'DD': { money: 2, magic: 1 },
-        'EE': { reputation: 2, magic: 2 }
+        'EE': { reputation: 2, magic: 2 },
+        'FF': { money: 3, magic: 2 },
+        'GG': { reputation: 3, money: 1 },
+        'HH': { magic: 3, reputation: 1 }
     };
 
     function updateScores() {
@@ -113,7 +116,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         'BB+BB': 'CC',
         'CC+CC': 'DD',
         'BB+CC': 'DD',
-        'DD+DD': 'EE'
+        'DD+DD': 'EE',
+        'EE+EE': 'FF',
+        'BB+DD': 'GG',
+        'CC+EE': 'HH'
     };
 
     let nextItemId = 1;
@@ -278,7 +284,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
 
     function randomBaseCode() {
-        const bases = ['AA', 'BB'];
+        const bases = ['AA', 'BB', 'CC'];
         return bases[Math.floor(Math.random() * bases.length)];
     }
 
