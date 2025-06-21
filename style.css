@@ -109,6 +109,12 @@ body {
     padding-bottom: 8px;
 }
 
+.reward-item {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+}
+
 .recipe-section h3 {
     margin: 4px 0;
     background: #f9f1ff;
