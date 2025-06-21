@@ -123,12 +123,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 const header = document.createElement('h3');
                 const def = itemMap[result] || { name: result, code: result };
-                const earn = itemEarnings[result] || {};
-                const earnParts = [];
-                if (earn.money) earnParts.push(`$${earn.money}`);
-                if (earn.magic) earnParts.push(`${earn.magic} Mag`);
-                if (earn.reputation) earnParts.push(`${earn.reputation} Rep`);
-                const earnTxt = earnParts.length ? ` (${earnParts.join(', ')})` : '';
+                const earn = itemEarnings[result] || { money: 0, magic: 0, reputation: 0 };
+                const earnTxt = ` ($${earn.money}, ${earn.magic} Mag, ${earn.reputation} Rep)`;
                 header.textContent = `${def.name} [${def.code}]${earnTxt}`;
                 section.appendChild(header);
 
