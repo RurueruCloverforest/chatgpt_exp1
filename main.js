@@ -12,6 +12,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         width: canvasContainer.clientWidth,
         height: canvasContainer.clientHeight,
         backgroundColor: 0x1099bb,
+        backgroundAlpha: 0,
     });
 
     canvasContainer.appendChild(app.canvas);
