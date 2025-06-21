@@ -26,6 +26,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const itemListEl = document.getElementById('item-list');
         const recipeListEl = document.getElementById('recipe-list');
         const shopEl = document.getElementById('shop');
+        const infoPane = document.getElementById('info-pane');
 
         function refreshItemList() {
             itemListEl.innerHTML = '';
@@ -157,6 +158,7 @@ window.addEventListener('DOMContentLoaded', async () => {
               document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
               btn.classList.add('active');
               document.getElementById(btn.dataset.tab).classList.add('active');
+              infoPane.classList.toggle('show-video', btn.dataset.tab === 'character');
           });
       });
 
@@ -407,4 +409,5 @@ window.addEventListener('DOMContentLoaded', async () => {
       spawnItem(randomBaseCode());
       refreshRecipeList();
       refreshShop();
+      infoPane.classList.toggle('show-video', document.querySelector('.tab-button.active').dataset.tab === 'character');
   });
