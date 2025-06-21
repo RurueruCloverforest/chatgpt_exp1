@@ -142,6 +142,27 @@ window.addEventListener('DOMContentLoaded', async () => {
                     'MM+NN': 'OO',
                     'II+JJ': 'PP'
                 }
+            },
+            {
+                cost: 40,
+                recipes: {
+                    'OO+PP': 'QQ',
+                    'JJ+OO': 'RR'
+                }
+            },
+            {
+                cost: 50,
+                recipes: {
+                    'QQ+PP': 'SS',
+                    'QQ+RR': 'TT'
+                }
+            },
+            {
+                cost: 60,
+                recipes: {
+                    'SS+TT': 'UU',
+                    'RR+UU': 'VV'
+                }
             }
         ];
 
@@ -159,7 +180,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const gatherSites = [
             { repRequirement: 5, itemCodes: ['KK', 'LL'], interval: 3000, purchased: false, active: false, timerId: null },
-            { repRequirement: 20, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null }
+            { repRequirement: 20, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null },
+            { repRequirement: 50, itemCodes: ['OO', 'PP'], interval: 5000, purchased: false, active: false, timerId: null }
         ];
 
         const SAVE_KEY = 'mergeGameState';
@@ -329,7 +351,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         'KK': { money: 2, reputation: 1 },
         'LL': { magic: 2, reputation: 1 },
         'OO': { magic: 5, reputation: 3 },
-        'PP': { money: 5, reputation: 4 }
+        'PP': { money: 5, reputation: 4 },
+        'QQ': { money: 6, reputation: 4 },
+        'RR': { magic: 6, reputation: 4 },
+        'SS': { money: 7, magic: 3, reputation: 5 },
+        'TT': { magic: 7, reputation: 5 },
+        'UU': { money: 8, reputation: 6 },
+        'VV': { money: 4, magic: 8, reputation: 7 }
     };
 
     function updateScores() {
@@ -387,7 +415,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         'GG+GG': 2,
         'HH+HH': 3,
         'MM+NN': 2,
-        'II+JJ': 4
+        'II+JJ': 4,
+        'OO+PP': 5,
+        'JJ+OO': 4,
+        'QQ+PP': 6,
+        'QQ+RR': 6,
+        'SS+TT': 8,
+        'RR+UU': 9
     };
 
     loadState();

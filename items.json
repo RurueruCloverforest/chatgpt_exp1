@@ -14,5 +14,11 @@
   {"id":13, "code":"MM", "name":"Glowing Crystal", "color":"#cc33ff"},
   {"id":14, "code":"NN", "name":"Ancient Bark", "color":"#33cc33"},
   {"id":15, "code":"OO", "name":"Mystic Flame", "color":"#ffcc33"},
-  {"id":16, "code":"PP", "name":"Arcane Crown", "color":"#cc6633"}
+  {"id":16, "code":"PP", "name":"Arcane Crown", "color":"#cc6633"},
+  {"id":17, "code":"QQ", "name":"Divine Relic", "color":"#ffaaaa"},
+  {"id":18, "code":"RR", "name":"Eldritch Essence", "color":"#aaffaa"},
+  {"id":19, "code":"SS", "name":"Chrono Shard", "color":"#aaaaff"},
+  {"id":20, "code":"TT", "name":"Void Crystal", "color":"#ffaa55"},
+  {"id":21, "code":"UU", "name":"Celestial Stone", "color":"#55aaff"},
+  {"id":22, "code":"VV", "name":"Mystic Crown", "color":"#dd55ff"}
 ]
