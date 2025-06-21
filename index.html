@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixiJS Merge Game</title>
+    <title id="text-title"></title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Item Merge Game</h1>
-    <p>New circles appear every second. When two circles of the same level collide, they combine into the next level. Drag items to the dark circle in the bottom-right to convert them into resources.</p>
+    <h1 id="text-header"></h1>
+    <p id="text-desc"></p>
     <div id="game-wrapper">
         <div id="canvas-container">
             <div id="scoreboard">
-                <span id="score-reputation">Reputation: 0</span>
-                <span id="score-magic">Magic: 0</span>
-                <span id="score-money">Money: 0</span>
-                <span id="score-extra1">Magic Robe: None</span>
+                <span id="score-reputation"></span>
+                <span id="score-magic"></span>
+                <span id="score-money"></span>
+                <span id="score-extra1"></span>
                 <span id="score-extra2"></span>
                 <span id="game-time"></span>
             </div>
@@ -23,13 +23,13 @@
         <div id="info-pane">
             <video id="info-bg-video" src="Flux1.AI-2025-06-21.mp4" autoplay muted loop playsinline></video>
             <div class="tab-buttons">
-                <button class="tab-button active" data-tab="item-list">Items</button>
-                <button class="tab-button" data-tab="recipe-list">Recipes</button>
-                <button class="tab-button" data-tab="shop">Shop</button>
-                <button class="tab-button" data-tab="rewards">Rewards</button>
-                <button class="tab-button" data-tab="character">Character</button>
-                <button class="tab-button" data-tab="chronicle">Chronicle</button>
-                <button class="tab-button" data-tab="system">System</button>
+                <button id="tab-items" class="tab-button active" data-tab="item-list"></button>
+                <button id="tab-recipes" class="tab-button" data-tab="recipe-list"></button>
+                <button id="tab-shop" class="tab-button" data-tab="shop"></button>
+                <button id="tab-rewards" class="tab-button" data-tab="rewards"></button>
+                <button id="tab-character" class="tab-button" data-tab="character"></button>
+                <button id="tab-chronicle" class="tab-button" data-tab="chronicle"></button>
+                <button id="tab-system" class="tab-button" data-tab="system"></button>
             </div>
             <div id="item-list" class="tab active"></div>
             <div id="recipe-list" class="tab"></div>
@@ -38,8 +38,15 @@
             <div id="character" class="tab"></div>
             <div id="chronicle" class="tab"></div>
             <div id="system" class="tab">
-                <p class="warning">このボタンを押すとデータが初期化されます</p>
-                <button id="clear-progress-btn">進行状況を初期化</button>
+                <div>
+                    <label id="lang-label" for="lang-select"></label>
+                    <select id="lang-select">
+                        <option value="ja">日本語</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <p id="system-warning" class="warning"></p>
+                <button id="clear-progress-btn"></button>
             </div>
         </div>
     </div>
