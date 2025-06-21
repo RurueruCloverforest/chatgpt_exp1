@@ -24,6 +24,23 @@ window.addEventListener('DOMContentLoaded', async () => {
       };
       const scores = { reputation: 0, magic: 0, money: 0 };
 
+      const gameTimeEl = document.getElementById('game-time');
+      const gameStartTime = new Date(1000, 3, 1, 9, 0, 0);
+      let gameTime = new Date(gameStartTime.getTime());
+
+      function formatGameTime(dt) {
+          const y = dt.getFullYear();
+          const m = String(dt.getMonth() + 1).padStart(2, '0');
+          const d = String(dt.getDate()).padStart(2, '0');
+          const hh = String(dt.getHours()).padStart(2, '0');
+          const mm = String(dt.getMinutes()).padStart(2, '0');
+          return `${y}年${m}月${d}日${hh}:${mm}`;
+      }
+
+      function updateGameTime() {
+          gameTimeEl.textContent = formatGameTime(gameTime);
+      }
+
       const reputationRanks = [
           { threshold: 0, label: '無名の錬金術師' },
           { threshold: 5, label: '見習い錬金術師' },
@@ -429,6 +446,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     loadState();
     updateScores();
+    updateGameTime();
+
+    setInterval(() => {
+        gameTime = new Date(gameTime.getTime() + 3600000);
+        updateGameTime();
+    }, 1000);
 
     let nextItemId = 1;
 
