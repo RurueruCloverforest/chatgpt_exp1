@@ -84,6 +84,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const infoPane = document.getElementById('info-pane');
         const chronicleEl = document.getElementById('chronicle');
         let chronicleEntries = [];
+        const itemEarnings = {};
         let currentRankIndex = 0;
 
         function refreshChronicle() {
@@ -122,7 +123,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 const header = document.createElement('h3');
                 const def = itemMap[result] || { name: result, code: result };
-                header.textContent = `${def.name} [${def.code}]`;
+                const earn = itemEarnings[result] || {};
+                const earnParts = [];
+                if (earn.money) earnParts.push(`$${earn.money}`);
+                if (earn.magic) earnParts.push(`${earn.magic} Mag`);
+                if (earn.reputation) earnParts.push(`${earn.reputation} Rep`);
+                const earnTxt = earnParts.length ? ` (${earnParts.join(', ')})` : '';
+                header.textContent = `${def.name} [${def.code}]${earnTxt}`;
                 section.appendChild(header);
 
                 byResult[result].forEach(({ a, b, key }) => {
@@ -225,6 +232,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 scores,
                 purchasedRecipeBooks,
                 chronicle: chronicleEntries,
+                itemEarnings,
                 gatherSites: gatherSites.map(site => ({
                     purchased: site.purchased,
                     active: site.active
@@ -253,6 +261,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
                 if (Array.isArray(data.chronicle)) {
                     chronicleEntries = data.chronicle;
+                }
+                if (data.itemEarnings) {
+                    Object.assign(itemEarnings, data.itemEarnings);
                 }
                 if (Array.isArray(data.gatherSites)) {
                     data.gatherSites.forEach((siteData, idx) => {
@@ -422,7 +433,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         scores.money += reward.money || 0;
         scores.magic += reward.magic || 0;
         scores.reputation += reward.reputation || 0;
+        if (!itemEarnings[code]) {
+            itemEarnings[code] = { money: 0, magic: 0, reputation: 0 };
+        }
+        itemEarnings[code].money += reward.money || 0;
+        itemEarnings[code].magic += reward.magic || 0;
+        itemEarnings[code].reputation += reward.reputation || 0;
         updateScores();
+        refreshRecipeList();
     }
 
 
