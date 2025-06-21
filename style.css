@@ -122,3 +122,13 @@ body {
 .warning {
     color: red;
 }
+
+.shop-button {
+    display: block;
+    width: 100%;
+    margin: 4px 0;
+}
+
+.shop-button.purchased {
+    opacity: 0.5;
+}
