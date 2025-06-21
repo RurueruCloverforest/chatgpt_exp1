@@ -79,6 +79,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
     }
+
+    function awardForCode(code) {
+        const reward = endpointRewards[code] || {};
+        scores.money += reward.money || 0;
+        scores.magic += reward.magic || 0;
+        scores.reputation += reward.reputation || 0;
+        updateScores();
+    }
+
     updateScores();
 
     const endpoint = new PIXI.Graphics();
@@ -208,11 +217,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             if (atEndpoint(item)) {
                 if (isTerminalCode(item.code)) {
-                    const reward = endpointRewards[item.code] || {};
-                    scores.money += reward.money || 0;
-                    scores.magic += reward.magic || 0;
-                    scores.reputation += reward.reputation || 0;
-                    updateScores();
+                    awardForCode(item.code);
                     app.stage.removeChild(item);
                     items.splice(i, 1);
                     refreshItemList();
@@ -247,7 +252,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                         app.stage.removeChild(b);
                         items.splice(j, 1);
                         items.splice(i, 1);
-                        spawnItem(resultCode, newX, newY);
+
+                        if (isTerminalCode(resultCode)) {
+                            awardForCode(resultCode);
+                            refreshItemList();
+                        } else {
+                            spawnItem(resultCode, newX, newY);
+                        }
+
                         scores.reputation += 1;
                         scores.magic += 1;
                         scores.money += 1;
