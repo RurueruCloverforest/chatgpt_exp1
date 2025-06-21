@@ -118,6 +118,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (reward.magic) rewardParts.push(`${reward.magic} Mag`);
                 if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
                 const div = document.createElement('div');
+                div.className = 'reward-item';
                 div.textContent = `${def.name} [${code}] ${count}/${threshold} (Reward: ${rewardParts.join(', ')})`;
                 rewardsEl.appendChild(div);
             });
