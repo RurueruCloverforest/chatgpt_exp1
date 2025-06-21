@@ -140,3 +140,11 @@ body {
 .shop-button.purchased {
     opacity: 0.5;
 }
+
+.shop-section-title {
+    margin: 8px 0 4px;
+    padding: 4px;
+    font-weight: bold;
+    background: #e8e8e8;
+    border-top: 1px solid #ccc;
+}

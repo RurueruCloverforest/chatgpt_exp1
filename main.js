@@ -270,6 +270,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const recipeBooks = [
             {
+                name: { en: 'Twinkle Primer', ja: 'きらきら入門書' },
                 cost: 15,
                 recipes: {
                     'AA+EE': 'GG',
@@ -277,6 +278,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             },
             {
+                name: { en: 'Fluffy Formulas', ja: 'ふわふわ配合書' },
                 cost: 35,
                 recipes: {
                     'GG+HH': 'II',
@@ -284,6 +286,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             },
             {
+                name: { en: 'Whimsy Mixes', ja: 'わくわく調合書' },
                 cost: 60,
                 recipes: {
                     'MM+NN': 'OO',
@@ -291,6 +294,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             },
             {
+                name: { en: 'Sparkle Secrets', ja: 'きらめき秘術書' },
                 cost: 90,
                 recipes: {
                     'OO+PP': 'QQ',
@@ -298,6 +302,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             },
             {
+                name: { en: 'Charming Concoctions', ja: 'かわいい錬成録' },
                 cost: 125,
                 recipes: {
                     'QQ+PP': 'SS',
@@ -305,6 +310,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             },
             {
+                name: { en: 'Dream Alchemy', ja: 'ゆめみる錬金書' },
                 cost: 170,
                 recipes: {
                     'SS+TT': 'UU',
@@ -351,16 +357,30 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
             return robe.name;
         }
+
+        function getBookName(book) {
+            if (typeof book.name === 'object') {
+                return book.name[lang] || book.name.en || book.name.ja || '';
+            }
+            return book.name;
+        }
+
+        function getSiteName(site) {
+            if (typeof site.name === 'object') {
+                return site.name[lang] || site.name.en || site.name.ja || '';
+            }
+            return site.name;
+        }
         let equippedRobe = -1;
         let robeTimerId = null;
 
         const gatherSites = [
-            { repRequirement: 15, itemCodes: ['KK', 'LL'], interval: 3000, purchased: false, active: false, timerId: null },
-            { repRequirement: 60, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null },
-            { repRequirement: 150, itemCodes: ['OO', 'PP'], interval: 5000, purchased: false, active: false, timerId: null },
+            { name: { en: 'Pixie Meadow', ja: '妖精の草原' }, repRequirement: 15, itemCodes: ['KK', 'LL'], interval: 3000, purchased: false, active: false, timerId: null },
+            { name: { en: 'Crystal Hollow', ja: 'クリスタル洞くつ' }, repRequirement: 60, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null },
+            { name: { en: 'Fluffy Forge', ja: 'ふわふわ鍛冶場' }, repRequirement: 150, itemCodes: ['OO', 'PP'], interval: 5000, purchased: false, active: false, timerId: null },
             // New gathering sites with a small selection of items each
-            { repRequirement: 320, itemCodes: ['QQ', 'RR', 'SS'], interval: 6000, purchased: false, active: false, timerId: null },
-            { repRequirement: 450, itemCodes: ['TT', 'UU', 'VV'], interval: 7000, purchased: false, active: false, timerId: null }
+            { name: { en: 'Relic Outpost', ja: 'レリック前哨地' }, repRequirement: 320, itemCodes: ['QQ', 'RR', 'SS'], interval: 6000, purchased: false, active: false, timerId: null },
+            { name: { en: 'Starlit Atelier', ja: '星あかりアトリエ' }, repRequirement: 450, itemCodes: ['TT', 'UU', 'VV'], interval: 7000, purchased: false, active: false, timerId: null }
         ];
 
         const SAVE_KEY = 'mergeGameState';
@@ -485,18 +505,27 @@ window.addEventListener('DOMContentLoaded', async () => {
             return site.itemCodes[Math.floor(Math.random() * site.itemCodes.length)];
         }
 
-        function refreshShop() {
-            shopEl.innerHTML = '';
+       function refreshShop() {
+           shopEl.innerHTML = '';
+
+            const addTitle = key => {
+                const title = document.createElement('div');
+                title.className = 'shop-section-title';
+                title.textContent = t(key);
+                shopEl.appendChild(title);
+            };
+
+            addTitle('shopCategoryTomes');
 
             recipeBooks.forEach((book, idx) => {
                 const btn = document.createElement('button');
                 btn.className = 'shop-button';
                 if (idx < purchasedRecipeBooks) {
-                    btn.textContent = t('recipeBookPurchased', { num: idx + 1 });
+                    btn.textContent = t('recipeBookPurchased', { name: getBookName(book) });
                     btn.disabled = true;
                     btn.classList.add('purchased');
                 } else {
-                    btn.textContent = t('recipeBookBuy', { num: idx + 1, cost: book.cost });
+                    btn.textContent = t('recipeBookBuy', { name: getBookName(book), cost: book.cost });
                     btn.title = getRecipesTooltip(book.recipes);
                     btn.disabled = scores.money < book.cost;
                     btn.addEventListener('click', () => {
@@ -512,19 +541,21 @@ window.addEventListener('DOMContentLoaded', async () => {
                 shopEl.appendChild(btn);
             });
 
+            addTitle('shopCategoryCamps');
+
             gatherSites.forEach((site, idx) => {
                 const btn = document.createElement('button');
                 btn.className = 'shop-button';
                 if (site.purchased) {
                     if (site.active) {
-                        btn.textContent = t('gatherActive', { num: idx + 1 });
+                        btn.textContent = t('gatherActive', { name: getSiteName(site) });
                         btn.addEventListener('click', () => {
                             stopGatherSite(idx);
                             refreshShop();
                             if (typeof saveState === 'function') saveState();
                         });
                     } else {
-                        btn.textContent = t('gatherInactive', { num: idx + 1 });
+                        btn.textContent = t('gatherInactive', { name: getSiteName(site) });
                         btn.addEventListener('click', () => {
                             startGatherSite(idx);
                             refreshShop();
@@ -533,7 +564,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     }
                     btn.disabled = false;
                 } else {
-                    btn.textContent = t('gatherBuy', { num: idx + 1, rep: site.repRequirement });
+                    btn.textContent = t('gatherBuy', { name: getSiteName(site), rep: site.repRequirement });
                     btn.disabled = scores.reputation < site.repRequirement;
                     btn.addEventListener('click', () => {
                         if (scores.reputation < site.repRequirement) return;
@@ -544,6 +575,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
                 shopEl.appendChild(btn);
             });
+
+            addTitle('shopCategoryRobes');
 
             magicRobes.forEach((robe, idx) => {
                 const btn = document.createElement('button');
