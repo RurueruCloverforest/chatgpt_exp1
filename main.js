@@ -108,8 +108,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             { threshold: 600, label: () => t('rank9') }
         ];
 
-        updateScores();
-
       function getReputationLabel(value) {
           let label = reputationRanks[0].label();
           for (const rank of reputationRanks) {
