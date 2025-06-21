@@ -243,8 +243,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         updateScores();
     }
 
-    loadState();
-    updateScores();
 
     const endpoint = new PIXI.Graphics();
     endpoint.beginFill(0x444444);
@@ -280,6 +278,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         'GG+GG': 2,
         'HH+HH': 3
     };
+
+    loadState();
+    updateScores();
 
     let nextItemId = 1;
 
