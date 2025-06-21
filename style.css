@@ -9,7 +9,7 @@ body {
 #game-wrapper {
     display: flex;
     width: 100vw;
-    overflow: hidden;
+    overflow-x: auto;
 }
 
 #canvas-container {
