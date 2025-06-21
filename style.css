@@ -50,7 +50,7 @@ p {
 
 #info-pane {
     position: relative;
-    width: 250px;
+    width: 300px;
     height: 90vh;
     overflow-y: auto;
     background: rgba(255, 255, 255, 0.8);
