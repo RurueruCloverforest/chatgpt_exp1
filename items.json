@@ -3,5 +3,8 @@
   {"id":2, "code":"BB", "color":"#55ff55"},
   {"id":3, "code":"CC", "color":"#5555ff"},
   {"id":4, "code":"DD", "color":"#ffff55"},
-  {"id":5, "code":"EE", "color":"#ff55ff"}
+  {"id":5, "code":"EE", "color":"#ff55ff"},
+  {"id":6, "code":"FF", "color":"#55ffff"},
+  {"id":7, "code":"GG", "color":"#ffaa00"},
+  {"id":8, "code":"HH", "color":"#8888ff"}
 ]
