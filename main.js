@@ -42,18 +42,18 @@ window.addEventListener('DOMContentLoaded', async () => {
           gameTimeEl.textContent = formatGameTime(gameTime);
       }
 
-      const reputationRanks = [
-          { threshold: 0, label: '無名の錬金術師' },
-          { threshold: 5, label: '見習い錬金術師' },
-          { threshold: 10, label: '町外れの調合士' },
-          { threshold: 20, label: '怪しい小屋の錬金術師' },
-          { threshold: 35, label: '地元で評判の錬金術師' },
-          { threshold: 50, label: '一流錬金術師' },
-          { threshold: 70, label: '名高い錬金マスター' },
-          { threshold: 100, label: '王国御用達錬金術師' },
-          { threshold: 150, label: '伝説の錬金術師' },
-          { threshold: 200, label: '錬金術の神髄' }
-      ];
+        const reputationRanks = [
+            { threshold: 0, label: '無名の錬金術師' },
+            { threshold: 15, label: '見習い錬金術師' },
+            { threshold: 30, label: '町外れの調合士' },
+            { threshold: 60, label: '怪しい小屋の錬金術師' },
+            { threshold: 100, label: '地元で評判の錬金術師' },
+            { threshold: 150, label: '一流錬金術師' },
+            { threshold: 220, label: '名高い錬金マスター' },
+            { threshold: 320, label: '王国御用達錬金術師' },
+            { threshold: 450, label: '伝説の錬金術師' },
+            { threshold: 600, label: '錬金術の神髄' }
+        ];
 
       function getReputationLabel(value) {
           let label = reputationRanks[0].label;
@@ -208,42 +208,42 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const recipeBooks = [
             {
-                cost: 10,
+                cost: 15,
                 recipes: {
                     'AA+EE': 'GG',
                     'BB+FF': 'HH'
                 }
             },
             {
-                cost: 20,
+                cost: 35,
                 recipes: {
                     'GG+HH': 'II',
                     'DD+FF': 'JJ'
                 }
             },
             {
-                cost: 30,
+                cost: 60,
                 recipes: {
                     'MM+NN': 'OO',
                     'II+JJ': 'PP'
                 }
             },
             {
-                cost: 40,
+                cost: 90,
                 recipes: {
                     'OO+PP': 'QQ',
                     'JJ+OO': 'RR'
                 }
             },
             {
-                cost: 50,
+                cost: 125,
                 recipes: {
                     'QQ+PP': 'SS',
                     'QQ+RR': 'TT'
                 }
             },
             {
-                cost: 60,
+                cost: 170,
                 recipes: {
                     'SS+TT': 'UU',
                     'RR+UU': 'VV'
@@ -272,12 +272,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         let robeTimerId = null;
 
         const gatherSites = [
-            { repRequirement: 5, itemCodes: ['KK', 'LL'], interval: 3000, purchased: false, active: false, timerId: null },
-            { repRequirement: 20, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null },
-            { repRequirement: 50, itemCodes: ['OO', 'PP'], interval: 5000, purchased: false, active: false, timerId: null },
+            { repRequirement: 15, itemCodes: ['KK', 'LL'], interval: 3000, purchased: false, active: false, timerId: null },
+            { repRequirement: 60, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null },
+            { repRequirement: 150, itemCodes: ['OO', 'PP'], interval: 5000, purchased: false, active: false, timerId: null },
             // New gathering sites with a small selection of items each
-            { repRequirement: 100, itemCodes: ['QQ', 'RR', 'SS'], interval: 6000, purchased: false, active: false, timerId: null },
-            { repRequirement: 150, itemCodes: ['TT', 'UU', 'VV'], interval: 7000, purchased: false, active: false, timerId: null }
+            { repRequirement: 320, itemCodes: ['QQ', 'RR', 'SS'], interval: 6000, purchased: false, active: false, timerId: null },
+            { repRequirement: 450, itemCodes: ['TT', 'UU', 'VV'], interval: 7000, purchased: false, active: false, timerId: null }
         ];
 
         const SAVE_KEY = 'mergeGameState';
@@ -521,13 +521,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         'CC': { reputation: 1 },
         'DD': { money: 2, magic: 1 },
         'EE': { reputation: 2, magic: 2 },
-        'FF': { money: 3, magic: 2 },
+        'FF': { money: 6, magic: 4, reputation: 3 },
         'GG': { reputation: 3, money: 1 },
         'HH': { magic: 3, reputation: 1 },
         'II': { magic: 4, reputation: 2 },
         'JJ': { money: 4, reputation: 2 },
-        'KK': { money: 2, reputation: 1 },
-        'LL': { magic: 2, reputation: 1 },
+        'KK': { money: 4, reputation: 2 },
+        'LL': { magic: 4, reputation: 2 },
         'MM': { money: 3, reputation: 2 },
         'NN': { magic: 3, reputation: 2 },
         'OO': { magic: 5, reputation: 3 },
@@ -537,7 +537,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         'SS': { money: 7, magic: 3, reputation: 5 },
         'TT': { magic: 7, reputation: 5 },
         'UU': { money: 8, reputation: 6 },
-        'VV': { money: 4, magic: 8, reputation: 7 }
+        'VV': { money: 8, magic: 12, reputation: 12 }
     };
 
     function updateScores() {
@@ -615,16 +615,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 
     const mergeCosts = {
-        'GG+GG': 2,
-        'HH+HH': 3,
-        'MM+NN': 2,
-        'II+JJ': 4,
-        'OO+PP': 5,
-        'JJ+OO': 4,
-        'QQ+PP': 6,
-        'QQ+RR': 6,
-        'SS+TT': 8,
-        'RR+UU': 9
+        'GG+GG': 3,
+        'HH+HH': 4,
+        'MM+NN': 3,
+        'II+JJ': 6,
+        'OO+PP': 8,
+        'JJ+OO': 6,
+        'QQ+PP': 10,
+        'QQ+RR': 10,
+        'SS+TT': 12,
+        'RR+UU': 15
     };
 
     loadState();
