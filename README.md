@@ -19,6 +19,10 @@ not consume reputation, but it will periodically generate new items that cannot
 be created through merging. Game progress such as your resources and shop
 purchases is saved to a cookie so you can continue later.
 
+The background image of the game area changes depending on your reputation
+rank. Place images named `background1.png`, `background2.png`, ... alongside the
+game files to customize the look for each rank.
+
 ## How to run
 
 Simply open `index.html` in a modern web browser. PixiJS is loaded from a CDN so no build step is required.
