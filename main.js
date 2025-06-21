@@ -6,14 +6,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         itemMap[def.code] = def;
     }
 
+    const canvasContainer = document.getElementById('canvas-container');
     const app = new PIXI.Application();
     await app.init({
-        width: window.innerWidth,
-        height: window.innerHeight * 0.9,
+        width: canvasContainer.clientWidth,
+        height: canvasContainer.clientHeight,
         backgroundColor: 0x1099bb,
     });
 
-    document.getElementById('canvas-container').appendChild(app.canvas);
+    canvasContainer.appendChild(app.canvas);
 
       const scoreEls = {
           reputation: document.getElementById('score-reputation'),
