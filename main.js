@@ -624,16 +624,25 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-      document.querySelectorAll('.tab-button').forEach(btn => {
-          btn.addEventListener('click', () => {
-              document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-              document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-              btn.classList.add('active');
-              document.getElementById(btn.dataset.tab).classList.add('active');
-              characterPane.classList.toggle('show-video', btn.dataset.tab === 'character');
-              infoPane.classList.remove('show-video');
+      function setupTabs(pane) {
+          const tabButtons = pane.querySelectorAll('.tab-button');
+          const tabs = pane.querySelectorAll('.tab');
+          tabButtons.forEach(btn => {
+              btn.addEventListener('click', () => {
+                  tabButtons.forEach(b => b.classList.remove('active'));
+                  tabs.forEach(t => t.classList.remove('active'));
+                  btn.classList.add('active');
+                  const target = pane.querySelector('#' + btn.dataset.tab);
+                  if (target) target.classList.add('active');
+                  if (pane === characterPane) {
+                      characterPane.classList.toggle('show-video', btn.dataset.tab === 'character');
+                  }
+              });
           });
-      });
+      }
+
+      setupTabs(characterPane);
+      setupTabs(infoPane);
 
       const clearBtn = document.getElementById('clear-progress-btn');
       if (clearBtn) {
@@ -1059,5 +1068,8 @@ window.addEventListener('DOMContentLoaded', async () => {
       refreshRecipeList();
       refreshShop();
       refreshRewards();
-      characterPane.classList.toggle('show-video', document.querySelector('.tab-button.active').dataset.tab === 'character');
+      const initialCharBtn = characterPane.querySelector('.tab-button.active');
+      if (initialCharBtn) {
+          characterPane.classList.toggle('show-video', initialCharBtn.dataset.tab === 'character');
+      }
   });
