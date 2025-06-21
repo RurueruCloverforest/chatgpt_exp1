@@ -118,3 +118,7 @@ body {
     padding-left: 8px;
     margin-bottom: 2px;
 }
+
+.warning {
+    color: red;
+}

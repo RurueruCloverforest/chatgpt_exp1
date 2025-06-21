@@ -97,8 +97,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         let gatherIntervalId = null;
 
         const SAVE_KEY = 'mergeGameState';
+        let cookieUpdatesEnabled = true;
 
         function saveState() {
+            if (!cookieUpdatesEnabled) return;
             const data = {
                 scores,
                 recipeBookPurchased,
@@ -198,6 +200,14 @@ window.addEventListener('DOMContentLoaded', async () => {
               infoPane.classList.toggle('show-video', btn.dataset.tab === 'character');
           });
       });
+
+      const clearBtn = document.getElementById('clear-progress-btn');
+      if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+              document.cookie = `${SAVE_KEY}=; max-age=0; path=/`;
+              cookieUpdatesEnabled = false;
+          });
+      }
 
     const endpointRadius = 30;
     const endpointX = app.renderer.width - endpointRadius - 20;
