@@ -123,8 +123,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
                 const header = document.createElement('h3');
                 const def = itemMap[result] || { name: result, code: result };
-                const earn = itemEarnings[result] || { money: 0, magic: 0, reputation: 0 };
-                const earnTxt = ` ($${earn.money}, ${earn.magic} Mag, ${earn.reputation} Rep)`;
+                const earn = itemEarnings[result] || { money: 0, magic: 0, reputation: 0, count: 0 };
+                const earnTxt = ` (${earn.count} made, ${earn.reputation} Rep, ${earn.magic} Mag, $${earn.money})`;
                 header.textContent = `${def.name} [${def.code}]${earnTxt}`;
                 section.appendChild(header);
 
@@ -259,7 +259,14 @@ window.addEventListener('DOMContentLoaded', async () => {
                     chronicleEntries = data.chronicle;
                 }
                 if (data.itemEarnings) {
-                    Object.assign(itemEarnings, data.itemEarnings);
+                    Object.entries(data.itemEarnings).forEach(([k, v]) => {
+                        itemEarnings[k] = {
+                            money: v.money || 0,
+                            magic: v.magic || 0,
+                            reputation: v.reputation || 0,
+                            count: v.count || 0
+                        };
+                    });
                 }
                 if (Array.isArray(data.gatherSites)) {
                     data.gatherSites.forEach((siteData, idx) => {
@@ -424,17 +431,18 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (typeof saveState === 'function') saveState();
     }
 
-    function awardForCode(code) {
+    function awardForCode(code, countDelta = 0) {
         const reward = endpointRewards[code] || {};
         scores.money += reward.money || 0;
         scores.magic += reward.magic || 0;
         scores.reputation += reward.reputation || 0;
         if (!itemEarnings[code]) {
-            itemEarnings[code] = { money: 0, magic: 0, reputation: 0 };
+            itemEarnings[code] = { money: 0, magic: 0, reputation: 0, count: 0 };
         }
         itemEarnings[code].money += reward.money || 0;
         itemEarnings[code].magic += reward.magic || 0;
         itemEarnings[code].reputation += reward.reputation || 0;
+        itemEarnings[code].count += countDelta;
         updateScores();
         refreshRecipeList();
     }
@@ -517,6 +525,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function spawnItem(code = 'AA', x = app.renderer.width / 2, y = app.renderer.height / 2) {
         const def = itemMap[code];
+        if (!itemEarnings[code]) {
+            itemEarnings[code] = { money: 0, magic: 0, reputation: 0, count: 0 };
+        }
+        itemEarnings[code].count += 1;
+        refreshRecipeList();
         const container = new PIXI.Container();
 
         const g = new PIXI.Graphics();
@@ -635,7 +648,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         items.splice(i, 1);
 
                         if (isTerminalCode(resultCode)) {
-                            awardForCode(resultCode);
+                            awardForCode(resultCode, 1);
                             refreshItemList();
                         } else {
                             spawnItem(resultCode, newX, newY);
