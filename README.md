@@ -4,6 +4,8 @@ This project showcases a small merge game built with PixiJS. Circles are created
 in the center of the screen and move in random directions. When two circles of
 the same level collide, they combine into a higher level circle. Hold the mouse
 button and move around to use the mixing tool, which repels nearby circles.
+Drag a finished item to the dark circle in the bottom-right corner to convert it
+into score. Items that can still be merged will simply bounce off of this zone.
 
 ## How to run
 

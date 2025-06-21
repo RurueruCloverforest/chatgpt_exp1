@@ -166,6 +166,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         return dist < endpointRadius + itemRadius;
     }
 
+    function isTerminalCode(code) {
+        for (const key of Object.keys(mergeRules)) {
+            const parts = key.split('+');
+            if (parts.includes(code)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     app.ticker.add(() => {
         for (let i = items.length - 1; i >= 0; i--) {
             const item = items[i];
@@ -191,15 +201,29 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (atEndpoint(item)) {
-                const reward = endpointRewards[item.code] || {};
-                scores.money += reward.money || 0;
-                scores.magic += reward.magic || 0;
-                scores.reputation += reward.reputation || 0;
-                updateScores();
-                app.stage.removeChild(item);
-                items.splice(i, 1);
-                refreshItemList();
-                continue;
+                if (isTerminalCode(item.code)) {
+                    const reward = endpointRewards[item.code] || {};
+                    scores.money += reward.money || 0;
+                    scores.magic += reward.magic || 0;
+                    scores.reputation += reward.reputation || 0;
+                    updateScores();
+                    app.stage.removeChild(item);
+                    items.splice(i, 1);
+                    refreshItemList();
+                    continue;
+                } else {
+                    // bounce back if not terminal
+                    const dx = item.x - endpointX;
+                    const dy = item.y - endpointY;
+                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+                    const overlap = endpointRadius + itemRadius - dist;
+                    item.x += nx * overlap;
+                    item.y += ny * overlap;
+                    item.vx *= -1;
+                    item.vy *= -1;
+                }
             }
         }
 
