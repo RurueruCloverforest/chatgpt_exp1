@@ -621,13 +621,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (atEndpoint(item)) {
-                if (isTerminalCode(item.code)) {
+                if (endpointRewards[item.code]) {
                     awardForCode(item.code);
                     app.stage.removeChild(item);
                     items.splice(i, 1);
                     refreshItemList();
                     continue;
-                } else {
+                } else if (!isTerminalCode(item.code)) {
                     // bounce back if not terminal
                     const dx = item.x - endpointX;
                     const dy = item.y - endpointY;
@@ -639,6 +639,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                     item.y += ny * overlap;
                     item.vx *= -1;
                     item.vy *= -1;
+                } else {
+                    app.stage.removeChild(item);
+                    items.splice(i, 1);
+                    refreshItemList();
+                    continue;
                 }
             }
         }
