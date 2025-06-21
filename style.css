@@ -9,4 +9,19 @@ body {
 #canvas-container {
     width: 100vw;
     height: 90vh;
+    position: relative;
+}
+
+#scoreboard {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    color: #ffffff;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 10;
+    padding: 4px 0;
 }
