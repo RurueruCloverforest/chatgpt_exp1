@@ -669,14 +669,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     function brightenColor(color) {
-        const r = Math.min(255, (color >> 16) + 40);
-        const g = Math.min(255, ((color >> 8) & 0xff) + 40);
-        const b = Math.min(255, (color & 0xff) + 40);
+        // Increase brightness much more so the popup text is closer to white
+        const r = Math.min(255, (color >> 16) + 120);
+        const g = Math.min(255, ((color >> 8) & 0xff) + 120);
+        const b = Math.min(255, (color & 0xff) + 120);
         return (r << 16) | (g << 8) | b;
     }
 
     const floatingTexts = [];
-    const floatDistance = Math.min(app.renderer.width, app.renderer.height) / 4;
+    // Longer distance so the text remains visible for more time
+    const floatDistance = Math.min(app.renderer.width, app.renderer.height) / 2;
 
     function createFloatingText(text, x, y, color) {
         const style = new PIXI.TextStyle({ fontSize: 14, fill: color });
@@ -685,7 +687,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         t.x = x;
         t.y = y;
         const angle = Math.random() * Math.PI * 2;
-        const speed = 2;
+        // Slow down the floating speed for easier readability
+        const speed = 1;
         floatingTexts.push({ t, startX: x, startY: y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed });
         app.stage.addChild(t);
     }
