@@ -49,9 +49,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                     if (reward.reputation) parts.push(`Rep ${reward.reputation}`);
                     rewardTxt = ' (' + parts.join(', ') + ')';
                 }
+                const cost = mergeCosts[key] || 0;
+                const costTxt = cost ? ` [Cost: ${cost} Mag]` : '';
                 const finalFlag = isTerminalCode(result) ? ' [Final]' : '';
                 const div = document.createElement('div');
-                div.textContent = `${a} + ${b} -> ${result}${finalFlag}${rewardTxt}`;
+                div.textContent = `${a} + ${b} -> ${result}${finalFlag}${rewardTxt}${costTxt}`;
                 recipeListEl.appendChild(div);
             }
         }
@@ -100,7 +102,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         'EE': { reputation: 2, magic: 2 },
         'FF': { money: 3, magic: 2 },
         'GG': { reputation: 3, money: 1 },
-        'HH': { magic: 3, reputation: 1 }
+        'HH': { magic: 3, reputation: 1 },
+        'II': { magic: 4, reputation: 2 },
+        'JJ': { money: 4, reputation: 2 }
     };
 
     function updateScores() {
@@ -145,7 +149,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         'DD+DD': 'EE',
         'EE+EE': 'FF',
         'BB+DD': 'GG',
-        'CC+EE': 'HH'
+        'CC+EE': 'HH',
+        'GG+GG': 'II',
+        'HH+HH': 'JJ'
+    };
+
+    const mergeCosts = {
+        'GG+GG': 2,
+        'HH+HH': 3
     };
 
     let nextItemId = 1;
@@ -278,7 +289,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (isColliding(a, b)) {
                     const key = mergeKey(a.code, b.code);
                     const resultCode = mergeRules[key];
-                    if (resultCode) {
+                    const cost = mergeCosts[key] || 0;
+                    if (resultCode && scores.magic >= cost) {
+                        scores.magic -= cost;
                         const newX = (a.x + b.x) / 2;
                         const newY = (a.y + b.y) / 2;
                         app.stage.removeChild(a);
@@ -299,7 +312,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         updateScores();
                         return; // restart detection next tick
                     } else {
-                        // simple velocity swap if no merge rule
+                        // simple velocity swap if no merge rule or insufficient magic
                         const tvx = a.vx; const tvy = a.vy;
                         a.vx = b.vx; a.vy = b.vy;
                         b.vx = tvx; b.vy = tvy;
