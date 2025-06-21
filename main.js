@@ -726,6 +726,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const repulsionRadius = 100;
     const repulsionStrength = 0.2;
+    const imageLoadWarningDelay = 1000; // ms before logging missing icon
     const mouse = { x: 0, y: 0, active: false };
 
     const mergeRules = {
@@ -873,7 +874,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 if (!sprite.texture.baseTexture.valid) {
                     console.warn(`Image still not loaded after delay: ${spritePath}`);
                 }
-            }, 1000);
+            }, imageLoadWarningDelay);
         }
 
         const label = new PIXI.Text(def.code, { fontSize: 12, fill: 0xffffff });

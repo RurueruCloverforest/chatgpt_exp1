@@ -34,6 +34,16 @@ the `id` field of the corresponding item in `items.json`. When an image is
 available, the item code label will automatically be hidden so only your icon is
 visible.
 
+If an icon doesn't load despite being reachable in your browser, open the
+included `image-test.html` file. Add a query parameter like
+`?path=images/item3.png` to have PixiJS attempt to load that image and report the
+result in the console. This helps verify whether PixiJS can access the image at
+all.
+
+If needed, you can change how long the game waits before warning about a
+missing icon. Adjust the `imageLoadWarningDelay` constant near the item setup in
+`main.js` to set a new timeout in milliseconds.
+
 ## How to run
 
 Because the game loads `items.json` via `fetch`, you need to run it from an
