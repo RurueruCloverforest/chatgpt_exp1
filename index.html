@@ -9,13 +9,21 @@
 <body>
     <h1>Item Merge Game</h1>
     <p>New circles appear every second. When two circles of the same level collide, they combine into the next level. Drag items to the dark circle in the bottom-right to convert them into resources.</p>
-    <div id="canvas-container">
-        <div id="scoreboard">
-            <span id="score-reputation">Reputation: 0</span>
-            <span id="score-magic">Magic: 0</span>
-            <span id="score-money">Money: 0</span>
-            <span id="score-extra1"></span>
-            <span id="score-extra2"></span>
+    <div id="game-wrapper">
+        <div id="canvas-container">
+            <div id="scoreboard">
+                <span id="score-reputation">Reputation: 0</span>
+                <span id="score-magic">Magic: 0</span>
+                <span id="score-money">Money: 0</span>
+                <span id="score-extra1"></span>
+                <span id="score-extra2"></span>
+            </div>
+        </div>
+        <div id="info-pane">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="item-list">Items</button>
+            </div>
+            <div id="item-list" class="tab active"></div>
         </div>
     </div>
 
