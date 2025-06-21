@@ -689,15 +689,25 @@ window.addEventListener('DOMContentLoaded', async () => {
         app.stage.addChild(t);
     }
 
-    function showRewardPopup(code, x, y) {
-        const reward = endpointRewards[code] || {};
+    function showNumbersPopup(reward, x, y, color) {
         const parts = [];
         if (reward.money) parts.push(`$${reward.money}`);
         if (reward.magic) parts.push(`${reward.magic} Mag`);
         if (reward.reputation) parts.push(`${reward.reputation} Rep`);
         if (parts.length === 0) return;
-        const color = brightenColor(colorForCode(code));
         createFloatingText(parts.join(' '), x, y, color);
+    }
+
+    function showRewardPopup(code, x, y) {
+        const reward = endpointRewards[code] || {};
+        const color = brightenColor(colorForCode(code));
+        showNumbersPopup(reward, x, y, color);
+    }
+
+    function showMergeReward(code, x, y) {
+        const reward = { money: 1, magic: 1, reputation: 1 };
+        const color = brightenColor(colorForCode(code));
+        showNumbersPopup(reward, x, y, color);
     }
 
     function spawnItem(code = 'AA', x = app.renderer.width / 2, y = app.renderer.height / 2) {
@@ -840,6 +850,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                             spawnItem(resultCode, newX, newY);
                         }
 
+                        showMergeReward(resultCode, newX, newY);
                         scores.reputation += 1;
                         scores.magic += 1;
                         scores.money += 1;
