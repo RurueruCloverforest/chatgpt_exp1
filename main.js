@@ -71,7 +71,6 @@ window.addEventListener('DOMContentLoaded', async () => {
       }
 
     refreshStaticText();
-    updateGameTime();
 
       const gameTimeEl = document.getElementById('game-time');
       const gameStartTime = new Date(1000, 3, 1, 9, 0, 0);
@@ -93,6 +92,8 @@ window.addEventListener('DOMContentLoaded', async () => {
       function updateGameTime() {
           gameTimeEl.textContent = formatGameTime(gameTime);
       }
+
+      updateGameTime();
 
         const reputationRanks = [
             { threshold: 0, label: () => t('rank0') },
