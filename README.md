@@ -1,12 +1,7 @@
-# PixiJS Rectangle Demo
+# PixiJS Merge Game
 
-This repository contains a simple setup for rendering a rectangle using PixiJS. It includes basic HTML, CSS and JavaScript files to get started quickly.
-
-This demo uses **PixiJS 8**, which requires initializing the application asynchronously before use.
-The main script demonstrates this with `await app.init({ width, height, backgroundColor })`.
+This project showcases a small merge game built with PixiJS. Circles are created in the center of the screen and move in random directions. When two circles of the same level collide, they combine into a higher level circle.
 
 ## How to run
 
-Open `index.html` in a modern web browser. The page loads PixiJS from a CDN and displays a red square centered on a blue background.
-
-No build step is required; just open the file directly or host it with any static file server.
+Simply open `index.html` in a modern web browser. PixiJS is loaded from a CDN so no build step is required.
