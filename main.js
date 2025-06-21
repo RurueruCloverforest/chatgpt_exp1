@@ -61,18 +61,17 @@ window.addEventListener('DOMContentLoaded', async () => {
           langSelect.addEventListener('change', () => {
               lang = langSelect.value;
               localStorage.setItem('lang', lang);
-              refreshStaticText();
-              updateScores();
-              updateGameTime();
-              refreshRecipeList();
-              refreshShop();
-              refreshRewards();
-          });
+            refreshStaticText();
+            updateScores();
+            updateGameTime();
+            refreshRecipeList();
+            refreshShop();
+            refreshRewards();
+        });
       }
 
-      refreshStaticText();
-      updateScores();
-      updateGameTime();
+    refreshStaticText();
+    updateGameTime();
 
       const gameTimeEl = document.getElementById('game-time');
       const gameStartTime = new Date(1000, 3, 1, 9, 0, 0);
@@ -107,6 +106,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             { threshold: 450, label: () => t('rank8') },
             { threshold: 600, label: () => t('rank9') }
         ];
+
+        updateScores();
 
       function getReputationLabel(value) {
           let label = reputationRanks[0].label();
