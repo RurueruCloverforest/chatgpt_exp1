@@ -89,6 +89,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             'AA+EE': 'GG',
             'BB+FF': 'HH'
         };
+        function getExtraRecipesTooltip() {
+            return Object.entries(extraRecipes).map(([k, v]) => {
+                const [a, b] = k.split('+');
+                const aName = itemMap[a]?.name || a;
+                const bName = itemMap[b]?.name || b;
+                const resultName = itemMap[v]?.name || v;
+                return `${aName} [${a}] + ${bName} [${b}] -> ${resultName} [${v}]`;
+            }).join('\n');
+        }
         let recipeBookPurchased = false;
 
         const gatherItemCodes = ['KK', 'LL'];
@@ -155,6 +164,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             shopEl.innerHTML = '';
             const btn = document.createElement('button');
             btn.textContent = recipeBookPurchased ? 'Recipe Book Purchased' : `Buy Recipe Book ($${recipeBookCost})`;
+            if (!recipeBookPurchased) {
+                btn.title = getExtraRecipesTooltip();
+            }
             btn.disabled = recipeBookPurchased || scores.money < recipeBookCost;
             btn.addEventListener('click', () => {
                 if (recipeBookPurchased || scores.money < recipeBookCost) return;
