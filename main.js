@@ -178,8 +178,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const reward = endpointRewards[code] || {};
                 const rewardParts = [];
                 if (reward.money) rewardParts.push(`$${reward.money}`);
-                if (reward.magic) rewardParts.push(`${reward.magic} Mag`);
-                if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
+                if (reward.magic) rewardParts.push(`☆${reward.magic}`);
+                if (reward.reputation) rewardParts.push(`ℛ${reward.reputation}`);
                 const div = document.createElement('div');
                 div.className = 'reward-item';
                 div.textContent = `${getItemName(code)} [${code}] ${count}/${threshold} (${t('reward')}: ${rewardParts.join(', ')})`;
@@ -232,7 +232,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const header = document.createElement('h3');
                 const def = itemMap[result] || { name: { en: result, ja: result }, code: result };
                 const earn = itemEarnings[result] || { money: 0, magic: 0, reputation: 0, count: 0 };
-                const earnTxt = ` (${earn.count} made, ${earn.reputation} Rep, ${earn.magic} Mag, $${earn.money})`;
+                const earnTxt = ` (${earn.count} made, ℛ${earn.reputation}, ☆${earn.magic}, $${earn.money})`;
                 header.textContent = `${getItemName(result)} [${def.code}]${earnTxt}`;
                 section.appendChild(header);
 
@@ -248,9 +248,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                         const reward = endpointRewards[result] || {};
                         const rewardParts = [];
                         if (reward.money) rewardParts.push(`$${reward.money}`);
-                        if (reward.magic) rewardParts.push(`${reward.magic} Mag`);
-                        if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
-                        const costTxt = cost ? ` ${t('cost')}: ${cost} Mag` : '';
+                        if (reward.magic) rewardParts.push(`☆${reward.magic}`);
+                        if (reward.reputation) rewardParts.push(`ℛ${reward.reputation}`);
+                        const costTxt = cost ? ` ${t('cost')}: ☆${cost}` : '';
                         const finalFlag = isTerminalCode(result) ? ` (${t('finalFlag')})` : '';
                         const aName = getItemName(a);
                         const bName = getItemName(b);
@@ -761,8 +761,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     function showNumbersPopup(reward, x, y, color) {
         const parts = [];
         if (reward.money) parts.push(`$${reward.money}`);
-        if (reward.magic) parts.push(`${reward.magic} Mag`);
-        if (reward.reputation) parts.push(`${reward.reputation} Rep`);
+        if (reward.magic) parts.push(`☆${reward.magic}`);
+        if (reward.reputation) parts.push(`ℛ${reward.reputation}`);
         if (parts.length === 0) return;
         createFloatingText(parts.join(' '), x, y, color);
     }
