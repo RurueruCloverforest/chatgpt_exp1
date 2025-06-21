@@ -16,7 +16,8 @@ You can also open the **Shop** tab to spend money on a recipe book which adds
 extra merge combinations. As your reputation increases, you'll be able to
 unlock an additional **Gathering Site** from the shop. Purchasing the site does
 not consume reputation, but it will periodically generate new items that cannot
-be created through merging.
+be created through merging. Game progress such as your resources and shop
+purchases is saved to a cookie so you can continue later.
 
 ## How to run
 

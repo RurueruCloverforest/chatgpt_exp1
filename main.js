@@ -70,6 +70,42 @@ window.addEventListener('DOMContentLoaded', async () => {
         let gatherSitePurchased = false;
         let gatherIntervalId = null;
 
+        const SAVE_KEY = 'mergeGameState';
+
+        function saveState() {
+            const data = {
+                scores,
+                recipeBookPurchased,
+                gatherSitePurchased
+            };
+            document.cookie = `${SAVE_KEY}=` +
+                encodeURIComponent(JSON.stringify(data)) +
+                '; max-age=31536000; path=/';
+        }
+
+        function loadState() {
+            const match = document.cookie.match(new RegExp('(?:^|; )' + SAVE_KEY + '=([^;]*)'));
+            if (!match) return;
+            try {
+                const data = JSON.parse(decodeURIComponent(match[1]));
+                if (data.scores) {
+                    scores.reputation = data.scores.reputation || 0;
+                    scores.magic = data.scores.magic || 0;
+                    scores.money = data.scores.money || 0;
+                }
+                if (data.recipeBookPurchased) {
+                    recipeBookPurchased = true;
+                    Object.entries(extraRecipes).forEach(([k, v]) => { mergeRules[k] = v; });
+                }
+                if (data.gatherSitePurchased) {
+                    gatherSitePurchased = true;
+                    startGatherSite();
+                }
+            } catch (e) {
+                console.error('Failed to load saved state', e);
+            }
+        }
+
         function startGatherSite() {
             if (gatherIntervalId) return;
             gatherIntervalId = setInterval(() => {
@@ -109,6 +145,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                     gatherSitePurchased = true;
                     startGatherSite();
                     refreshShop();
+                    if (typeof saveState === 'function') saveState();
                 });
             }
             shopEl.appendChild(gatherBtn);
@@ -146,6 +183,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
         if (typeof refreshShop === 'function') refreshShop();
+        if (typeof saveState === 'function') saveState();
     }
 
     function awardForCode(code) {
@@ -156,6 +194,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         updateScores();
     }
 
+    loadState();
     updateScores();
 
     const endpoint = new PIXI.Graphics();
