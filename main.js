@@ -326,10 +326,31 @@ window.addEventListener('DOMContentLoaded', async () => {
         let purchasedRecipeBooks = 0;
 
         const magicRobes = [
-            { name: 'Apprentice Robe', cost: 30, effect: 1, purchased: false },
-            { name: 'Adept Robe', cost: 60, effect: 2, purchased: false },
-            { name: 'Archmage Robe', cost: 100, effect: 3, purchased: false }
+            {
+                name: { en: 'Apprentice Robe', ja: '見習いのローブ' },
+                cost: 30,
+                effect: 1,
+                purchased: false
+            },
+            {
+                name: { en: 'Adept Robe', ja: '熟練者のローブ' },
+                cost: 60,
+                effect: 2,
+                purchased: false
+            },
+            {
+                name: { en: 'Archmage Robe', ja: '大魔導士のローブ' },
+                cost: 100,
+                effect: 3,
+                purchased: false
+            }
         ];
+        function getRobeName(robe) {
+            if (typeof robe.name === 'object') {
+                return robe.name[lang] || robe.name.en || robe.name.ja || '';
+            }
+            return robe.name;
+        }
         let equippedRobe = -1;
         let robeTimerId = null;
 
@@ -527,8 +548,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             magicRobes.forEach((robe, idx) => {
                 const btn = document.createElement('button');
                 btn.className = 'shop-button';
+                const robeName = getRobeName(robe);
                 if (!robe.purchased) {
-                    btn.textContent = t('buyRobe', { name: robe.name, cost: robe.cost });
+                    btn.textContent = t('buyRobe', { name: robeName, cost: robe.cost });
                     btn.disabled = scores.money < robe.cost;
                     btn.addEventListener('click', () => {
                         if (scores.money < robe.cost) return;
@@ -539,13 +561,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                     });
                 } else {
                     if (equippedRobe === idx) {
-                        btn.textContent = t('robeEquipped', { name: robe.name });
+                        btn.textContent = t('robeEquipped', { name: robeName });
                         btn.addEventListener('click', () => {
                             equipRobe(-1);
                             refreshShop();
                         });
                     } else {
-                        btn.textContent = t('robeEquip', { name: robe.name, effect: robe.effect });
+                        btn.textContent = t('robeEquip', { name: robeName, effect: robe.effect });
                         btn.addEventListener('click', () => {
                             equipRobe(idx);
                             refreshShop();
@@ -630,7 +652,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         scoreEls.money.textContent = t('scoreMoney', { value: scores.money });
         if (equippedRobe >= 0) {
             const r = magicRobes[equippedRobe];
-            scoreEls.robe.textContent = t('scoreRobe', { name: r.name, effect: r.effect });
+            scoreEls.robe.textContent = t('scoreRobe', { name: getRobeName(r), effect: r.effect });
         } else {
             scoreEls.robe.textContent = t('scoreRobeNone');
         }
