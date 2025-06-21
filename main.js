@@ -48,6 +48,18 @@ window.addEventListener('DOMContentLoaded', async () => {
           }
           return label;
       }
+
+      function getReputationIndex(value) {
+          let index = 0;
+          for (let i = 0; i < reputationRanks.length; i++) {
+              if (value >= reputationRanks[i].threshold) {
+                  index = i;
+              } else {
+                  break;
+              }
+          }
+          return index;
+      }
       
         const itemListEl = document.getElementById('item-list');
         const recipeListEl = document.getElementById('recipe-list');
@@ -269,6 +281,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         scoreEls.reputation.textContent = `Reputation: ${scores.reputation} (${label})`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
+        const rankIndex = getReputationIndex(scores.reputation);
+        canvasContainer.style.backgroundImage = `url('background${rankIndex + 1}.png')`;
         if (typeof refreshShop === 'function') refreshShop();
         if (typeof saveState === 'function') saveState();
     }
