@@ -485,8 +485,17 @@ window.addEventListener('DOMContentLoaded', async () => {
             return site.itemCodes[Math.floor(Math.random() * site.itemCodes.length)];
         }
 
-        function refreshShop() {
-            shopEl.innerHTML = '';
+       function refreshShop() {
+           shopEl.innerHTML = '';
+
+            const addTitle = key => {
+                const title = document.createElement('div');
+                title.className = 'shop-section-title';
+                title.textContent = t(key);
+                shopEl.appendChild(title);
+            };
+
+            addTitle('shopCategoryTomes');
 
             recipeBooks.forEach((book, idx) => {
                 const btn = document.createElement('button');
@@ -511,6 +520,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
                 shopEl.appendChild(btn);
             });
+
+            addTitle('shopCategoryCamps');
 
             gatherSites.forEach((site, idx) => {
                 const btn = document.createElement('button');
@@ -544,6 +555,8 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
                 shopEl.appendChild(btn);
             });
+
+            addTitle('shopCategoryRobes');
 
             magicRobes.forEach((robe, idx) => {
                 const btn = document.createElement('button');
