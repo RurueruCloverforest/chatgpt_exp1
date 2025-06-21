@@ -125,6 +125,14 @@ p {
     background: #f9f1ff;
     padding: 4px;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.recipe-icon {
+    width: 40px;
+    height: 40px;
 }
 
 .recipe-line {
