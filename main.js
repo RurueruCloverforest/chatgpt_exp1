@@ -146,6 +146,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const shopEl = document.getElementById('shop');
         const rewardsEl = document.getElementById('rewards');
         const infoPane = document.getElementById('info-pane');
+        const characterPane = document.getElementById('character-pane');
         const chronicleEl = document.getElementById('chronicle');
         let chronicleEntries = [];
         const itemEarnings = {};
@@ -629,7 +630,8 @@ window.addEventListener('DOMContentLoaded', async () => {
               document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
               btn.classList.add('active');
               document.getElementById(btn.dataset.tab).classList.add('active');
-              infoPane.classList.toggle('show-video', btn.dataset.tab === 'character');
+              characterPane.classList.toggle('show-video', btn.dataset.tab === 'character');
+              infoPane.classList.remove('show-video');
           });
       });
 
@@ -1057,5 +1059,5 @@ window.addEventListener('DOMContentLoaded', async () => {
       refreshRecipeList();
       refreshShop();
       refreshRewards();
-      infoPane.classList.toggle('show-video', document.querySelector('.tab-button.active').dataset.tab === 'character');
+      characterPane.classList.toggle('show-video', document.querySelector('.tab-button.active').dataset.tab === 'character');
   });
