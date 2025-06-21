@@ -857,8 +857,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         sprite.width = sprite.height = itemRadius * 2;
         sprite.mask = g;
 
-        const label = new PIXI.Text(def.code, {fontSize: 12, fill: 0xffffff});
+        const label = new PIXI.Text(def.code, { fontSize: 12, fill: 0xffffff });
         label.anchor.set(0.5);
+        // Hide the fallback code label once the sprite loads successfully
+        if (sprite.texture.baseTexture.valid) {
+            label.visible = false;
+        } else {
+            sprite.texture.baseTexture.on('loaded', () => {
+                label.visible = false;
+            });
+        }
 
         container.addChild(g);
         container.addChild(sprite);
