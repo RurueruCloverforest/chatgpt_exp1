@@ -100,3 +100,21 @@ body {
 .tab.active {
     display: block;
 }
+
+.recipe-section {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+}
+
+.recipe-section h3 {
+    margin: 4px 0;
+    background: #f9f1ff;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.recipe-line {
+    padding-left: 8px;
+    margin-bottom: 2px;
+}

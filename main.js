@@ -33,31 +33,55 @@ window.addEventListener('DOMContentLoaded', async () => {
             itemListEl.innerHTML = '';
             for (const item of items) {
                 const div = document.createElement('div');
-                div.textContent = `#${item.id} ${item.code}`;
+                const def = itemMap[item.code] || {};
+                const name = def.name ? ` - ${def.name}` : '';
+                div.textContent = `#${item.id} [${item.code}]${name}`;
                 itemListEl.appendChild(div);
             }
         }
 
         function refreshRecipeList() {
             recipeListEl.innerHTML = '';
+
+            const byResult = {};
             for (const [key, result] of Object.entries(mergeRules)) {
+                if (!byResult[result]) byResult[result] = [];
                 const [a, b] = key.split('+');
-                const reward = endpointRewards[result];
-                let rewardTxt = '';
-                if (reward) {
-                    const parts = [];
-                    if (reward.money) parts.push(`$${reward.money}`);
-                    if (reward.magic) parts.push(`Mag ${reward.magic}`);
-                    if (reward.reputation) parts.push(`Rep ${reward.reputation}`);
-                    rewardTxt = ' (' + parts.join(', ') + ')';
-                }
-                const cost = mergeCosts[key] || 0;
-                const costTxt = cost ? ` [Cost: ${cost} Mag]` : '';
-                const finalFlag = isTerminalCode(result) ? ' [Final]' : '';
-                const div = document.createElement('div');
-                div.textContent = `${a} + ${b} -> ${result}${finalFlag}${rewardTxt}${costTxt}`;
-                recipeListEl.appendChild(div);
+                byResult[result].push({ a, b, key });
             }
+
+            Object.keys(byResult).forEach(result => {
+                const section = document.createElement('div');
+                section.className = 'recipe-section';
+
+                const header = document.createElement('h3');
+                const def = itemMap[result] || { name: result, code: result };
+                header.textContent = `${def.name} [${def.code}]`;
+                section.appendChild(header);
+
+                byResult[result].forEach(({ a, b, key }) => {
+                    const line = document.createElement('div');
+                    const cost = mergeCosts[key] || 0;
+                    const reward = endpointRewards[result] || {};
+                    const rewardParts = [];
+                    if (reward.money) rewardParts.push(`$${reward.money}`);
+                    if (reward.magic) rewardParts.push(`${reward.magic} Mag`);
+                    if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
+                    const costTxt = cost ? ` Cost: ${cost} Mag` : '';
+                    const finalFlag = isTerminalCode(result) ? ' (Final)' : '';
+                    const aName = itemMap[a]?.name || a;
+                    const bName = itemMap[b]?.name || b;
+                    let txt = `${aName} [${a}] + ${bName} [${b}] -> ${def.name}${finalFlag}`;
+                    if (rewardParts.length || cost) {
+                        txt += ` (Reward: ${rewardParts.join(', ')}${cost ? ';' + costTxt : ''})`;
+                    }
+                    line.textContent = txt;
+                    line.className = 'recipe-line';
+                    section.appendChild(line);
+                });
+
+                recipeListEl.appendChild(section);
+            });
         }
 
         const recipeBookCost = 10;
