@@ -30,7 +30,9 @@ You can also customize the icons shown on moving items in the main area.
 This repository does not include any item images. If you want icons instead of
 colored circles, place your own square images named `item1.png`, `item2.png`,
 and so on inside an `images` folder next to the game files. Each number matches
-the `id` field of the corresponding item in `items.json`.
+the `id` field of the corresponding item in `items.json`. When an image is
+available, the item code label will automatically be hidden so only your icon is
+visible.
 
 ## How to run
 
