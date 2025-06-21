@@ -233,7 +233,19 @@ window.addEventListener('DOMContentLoaded', async () => {
                 const def = itemMap[result] || { name: { en: result, ja: result }, code: result };
                 const earn = itemEarnings[result] || { money: 0, magic: 0, reputation: 0, count: 0 };
                 const earnTxt = ` (${earn.count} made, ℛ${earn.reputation}, ☆${earn.magic}, $${earn.money})`;
-                header.textContent = `${getItemName(result)} [${def.code}]${earnTxt}`;
+
+                const icon = document.createElement('img');
+                icon.className = 'recipe-icon';
+                icon.alt = def.code;
+                if (def.id) {
+                    icon.src = `images/item${def.id}.png`;
+                }
+
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = `${getItemName(result)} [${def.code}]${earnTxt}`;
+
+                header.appendChild(icon);
+                header.appendChild(nameSpan);
                 section.appendChild(header);
 
                 if (byResult[result].length === 0) {
