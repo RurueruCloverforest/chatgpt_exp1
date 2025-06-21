@@ -65,6 +65,22 @@ window.addEventListener('DOMContentLoaded', async () => {
         };
         let recipeBookPurchased = false;
 
+        const gatherItemCodes = ['KK', 'LL'];
+        const gatherRepRequirement = 5;
+        let gatherSitePurchased = false;
+        let gatherIntervalId = null;
+
+        function startGatherSite() {
+            if (gatherIntervalId) return;
+            gatherIntervalId = setInterval(() => {
+                spawnItem(randomGatherCode());
+            }, 3000);
+        }
+
+        function randomGatherCode() {
+            return gatherItemCodes[Math.floor(Math.random() * gatherItemCodes.length)];
+        }
+
         function refreshShop() {
             shopEl.innerHTML = '';
             const btn = document.createElement('button');
@@ -80,6 +96,22 @@ window.addEventListener('DOMContentLoaded', async () => {
                 refreshShop();
             });
             shopEl.appendChild(btn);
+
+            const gatherBtn = document.createElement('button');
+            if (gatherSitePurchased) {
+                gatherBtn.textContent = 'Gathering Site Purchased';
+                gatherBtn.disabled = true;
+            } else {
+                gatherBtn.textContent = `Buy Gathering Site (requires ${gatherRepRequirement} Rep)`;
+                gatherBtn.disabled = scores.reputation < gatherRepRequirement;
+                gatherBtn.addEventListener('click', () => {
+                    if (gatherSitePurchased || scores.reputation < gatherRepRequirement) return;
+                    gatherSitePurchased = true;
+                    startGatherSite();
+                    refreshShop();
+                });
+            }
+            shopEl.appendChild(gatherBtn);
         }
 
       document.querySelectorAll('.tab-button').forEach(btn => {
@@ -104,7 +136,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         'GG': { reputation: 3, money: 1 },
         'HH': { magic: 3, reputation: 1 },
         'II': { magic: 4, reputation: 2 },
-        'JJ': { money: 4, reputation: 2 }
+        'JJ': { money: 4, reputation: 2 },
+        'KK': { money: 2, reputation: 1 },
+        'LL': { magic: 2, reputation: 1 }
     };
 
     function updateScores() {

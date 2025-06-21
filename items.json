@@ -8,5 +8,7 @@
   {"id":7, "code":"GG", "color":"#ffaa00"},
   {"id":8, "code":"HH", "color":"#8888ff"},
   {"id":9, "code":"II", "color":"#dd4477"},
-  {"id":10, "code":"JJ", "color":"#77dd44"}
+  {"id":10, "code":"JJ", "color":"#77dd44"},
+  {"id":11, "code":"KK", "color":"#ff8800"},
+  {"id":12, "code":"LL", "color":"#00aaff"}
 ]
