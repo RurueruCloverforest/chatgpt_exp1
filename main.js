@@ -11,8 +11,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     await app.init({
         width: canvasContainer.clientWidth,
         height: canvasContainer.clientHeight,
-        backgroundColor: 0x1099bb,
-        backgroundAlpha: 0,
+        // Use a subtle gray with slight transparency instead of bright blue
+        backgroundColor: 0x808080,
+        backgroundAlpha: 0.1,
     });
 
     canvasContainer.appendChild(app.canvas);
