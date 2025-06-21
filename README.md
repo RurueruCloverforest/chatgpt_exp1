@@ -9,7 +9,7 @@ more variety while playing. Some advanced recipes now require spending Magic to
 complete the merge. If you don't have enough Magic, those merges will fail.
 Drag a finished item to the dark circle in the bottom-right corner to convert it
 into score. Items that can still be merged will simply bounce off of this zone.
-Recipes indicate whether the result is a final item. There are now five
+Recipes indicate whether the result is a final item. There are now several
 possible final results. Final items disappear immediately when created and are
 turned into score instead of remaining on the board.
 You can also open the **Shop** tab to buy recipe books which unlock extra merge
