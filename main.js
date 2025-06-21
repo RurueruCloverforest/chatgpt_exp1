@@ -667,6 +667,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         return PIXI.Color.shared.setValue(def.color).toNumber();
     }
 
+    function brightenColor(color) {
+        const r = Math.min(255, (color >> 16) + 40);
+        const g = Math.min(255, ((color >> 8) & 0xff) + 40);
+        const b = Math.min(255, (color & 0xff) + 40);
+        return (r << 16) | (g << 8) | b;
+    }
+
     const floatingTexts = [];
     const floatDistance = Math.min(app.renderer.width, app.renderer.height) / 4;
 
@@ -689,7 +696,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (reward.magic) parts.push(`${reward.magic} Mag`);
         if (reward.reputation) parts.push(`${reward.reputation} Rep`);
         if (parts.length === 0) return;
-        createFloatingText(parts.join(' '), x, y, colorForCode(code));
+        const color = brightenColor(colorForCode(code));
+        createFloatingText(parts.join(' '), x, y, color);
     }
 
     function spawnItem(code = 'AA', x = app.renderer.width / 2, y = app.renderer.height / 2) {
