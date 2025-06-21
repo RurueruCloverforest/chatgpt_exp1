@@ -25,6 +25,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       
         const itemListEl = document.getElementById('item-list');
         const recipeListEl = document.getElementById('recipe-list');
+        const shopEl = document.getElementById('shop');
 
         function refreshItemList() {
             itemListEl.innerHTML = '';
@@ -55,6 +56,30 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        const recipeBookCost = 10;
+        const extraRecipes = {
+            'AA+EE': 'GG',
+            'BB+FF': 'HH'
+        };
+        let recipeBookPurchased = false;
+
+        function refreshShop() {
+            shopEl.innerHTML = '';
+            const btn = document.createElement('button');
+            btn.textContent = recipeBookPurchased ? 'Recipe Book Purchased' : `Buy Recipe Book ($${recipeBookCost})`;
+            btn.disabled = recipeBookPurchased || scores.money < recipeBookCost;
+            btn.addEventListener('click', () => {
+                if (recipeBookPurchased || scores.money < recipeBookCost) return;
+                scores.money -= recipeBookCost;
+                Object.entries(extraRecipes).forEach(([k, v]) => { mergeRules[k] = v; });
+                recipeBookPurchased = true;
+                updateScores();
+                refreshRecipeList();
+                refreshShop();
+            });
+            shopEl.appendChild(btn);
+        }
+
       document.querySelectorAll('.tab-button').forEach(btn => {
           btn.addEventListener('click', () => {
               document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
@@ -82,6 +107,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         scoreEls.reputation.textContent = `Reputation: ${scores.reputation}`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
+        if (typeof refreshShop === 'function') refreshShop();
     }
 
     function awardForCode(code) {
@@ -294,4 +320,5 @@ window.addEventListener('DOMContentLoaded', async () => {
 
       spawnItem(randomBaseCode());
       refreshRecipeList();
+      refreshShop();
   });

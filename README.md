@@ -11,6 +11,8 @@ into score. Items that can still be merged will simply bounce off of this zone.
 Recipes indicate whether the result is a final item. There are now three
 possible final results. Final items disappear immediately when created and are
 turned into score instead of remaining on the board.
+You can also open the **Shop** tab to spend money on a recipe book which adds
+extra merge combinations.
 
 ## How to run
 
