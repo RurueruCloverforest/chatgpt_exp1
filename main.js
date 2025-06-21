@@ -852,10 +852,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         g.x = 0;
         g.y = 0;
 
+        const sprite = PIXI.Sprite.from(`images/item${def.id}.png`);
+        sprite.anchor.set(0.5);
+        sprite.width = sprite.height = itemRadius * 2;
+        sprite.mask = g;
+
         const label = new PIXI.Text(def.code, {fontSize: 12, fill: 0xffffff});
         label.anchor.set(0.5);
 
         container.addChild(g);
+        container.addChild(sprite);
         container.addChild(label);
         container.x = x;
         container.y = y;
