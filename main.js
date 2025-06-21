@@ -22,16 +22,27 @@ window.addEventListener('DOMContentLoaded', async () => {
       };
       const scores = { reputation: 0, magic: 0, money: 0 };
       
-      const itemListEl = document.getElementById('item-list');
+        const itemListEl = document.getElementById('item-list');
+        const recipeListEl = document.getElementById('recipe-list');
 
-      function refreshItemList() {
-          itemListEl.innerHTML = '';
-          for (const item of items) {
-              const div = document.createElement('div');
-              div.textContent = `#${item.id} ${item.code}`;
-              itemListEl.appendChild(div);
-          }
-      }
+        function refreshItemList() {
+            itemListEl.innerHTML = '';
+            for (const item of items) {
+                const div = document.createElement('div');
+                div.textContent = `#${item.id} ${item.code}`;
+                itemListEl.appendChild(div);
+            }
+        }
+
+        function refreshRecipeList() {
+            recipeListEl.innerHTML = '';
+            for (const [key, result] of Object.entries(mergeRules)) {
+                const [a, b] = key.split('+');
+                const div = document.createElement('div');
+                div.textContent = `${a} + ${b} -> ${result}`;
+                recipeListEl.appendChild(div);
+            }
+        }
 
       document.querySelectorAll('.tab-button').forEach(btn => {
           btn.addEventListener('click', () => {
@@ -227,9 +238,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         return bases[Math.floor(Math.random() * bases.length)];
     }
 
-    setInterval(() => {
-        spawnItem(randomBaseCode());
-    }, 1000);
+      setInterval(() => {
+          spawnItem(randomBaseCode());
+      }, 1000);
 
-    spawnItem(randomBaseCode());
-});
+      spawnItem(randomBaseCode());
+      refreshRecipeList();
+  });
