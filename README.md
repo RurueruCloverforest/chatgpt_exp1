@@ -28,4 +28,21 @@ game files to customize the look for each rank.
 
 ## How to run
 
-Simply open `index.html` in a modern web browser. PixiJS is loaded from a CDN so no build step is required.
+Because the game loads `items.json` via `fetch`, you need to run it from an
+HTTP server. Opening the file directly with the `file://` scheme will cause the
+request for `items.json` to fail on most browsers.
+
+You can quickly start a local server from this directory with for example:
+
+```bash
+npx serve
+```
+
+or, if Python is installed:
+
+```bash
+python3 -m http.server
+```
+
+Then navigate to the shown address (e.g. `http://localhost:3000`) and open
+`index.html` there. PixiJS is loaded from a CDN so no build step is required.
