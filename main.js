@@ -21,6 +21,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           reputation: document.getElementById('score-reputation'),
           magic: document.getElementById('score-magic'),
           money: document.getElementById('score-money'),
+          robe: document.getElementById('score-extra1'),
       };
       const scores = { reputation: 0, magic: 0, money: 0 };
 
@@ -262,6 +263,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         let purchasedRecipeBooks = 0;
 
+        const magicRobes = [
+            { name: 'Apprentice Robe', cost: 30, effect: 1, purchased: false },
+            { name: 'Adept Robe', cost: 60, effect: 2, purchased: false },
+            { name: 'Archmage Robe', cost: 100, effect: 3, purchased: false }
+        ];
+        let equippedRobe = -1;
+        let robeTimerId = null;
+
         const gatherSites = [
             { repRequirement: 5, itemCodes: ['KK', 'LL'], interval: 3000, purchased: false, active: false, timerId: null },
             { repRequirement: 20, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null },
@@ -285,7 +294,9 @@ window.addEventListener('DOMContentLoaded', async () => {
                 gatherSites: gatherSites.map(site => ({
                     purchased: site.purchased,
                     active: site.active
-                }))
+                })),
+                magicRobes: magicRobes.map(r => ({ purchased: r.purchased })),
+                equippedRobe
             };
             document.cookie = `${SAVE_KEY}=` +
                 encodeURIComponent(JSON.stringify(data)) +
@@ -326,6 +337,18 @@ window.addEventListener('DOMContentLoaded', async () => {
                         rewardProgress[k] = v;
                     });
                 }
+                if (Array.isArray(data.magicRobes)) {
+                    data.magicRobes.forEach((rData, idx) => {
+                        if (magicRobes[idx]) {
+                            magicRobes[idx].purchased = !!rData.purchased;
+                        }
+                    });
+                }
+                if (typeof data.equippedRobe === 'number' && data.equippedRobe >= 0) {
+                    equipRobe(data.equippedRobe);
+                } else {
+                    equipRobe(-1);
+                }
                 refreshRewards();
                 if (Array.isArray(data.gatherSites)) {
                     data.gatherSites.forEach((siteData, idx) => {
@@ -358,6 +381,21 @@ window.addEventListener('DOMContentLoaded', async () => {
             clearInterval(site.timerId);
             site.timerId = null;
             site.active = false;
+        }
+
+        function equipRobe(index) {
+            if (robeTimerId) {
+                clearInterval(robeTimerId);
+                robeTimerId = null;
+            }
+            equippedRobe = index;
+            if (index >= 0) {
+                robeTimerId = setInterval(() => {
+                    scores.magic += magicRobes[index].effect;
+                    updateScores();
+                }, 10000);
+            }
+            updateScores();
         }
 
         function randomGatherCode(site) {
@@ -420,6 +458,37 @@ window.addEventListener('DOMContentLoaded', async () => {
                         refreshShop();
                         if (typeof saveState === 'function') saveState();
                     });
+                }
+                shopEl.appendChild(btn);
+            });
+
+            magicRobes.forEach((robe, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'shop-button';
+                if (!robe.purchased) {
+                    btn.textContent = `Buy ${robe.name} ($${robe.cost})`;
+                    btn.disabled = scores.money < robe.cost;
+                    btn.addEventListener('click', () => {
+                        if (scores.money < robe.cost) return;
+                        scores.money -= robe.cost;
+                        robe.purchased = true;
+                        equipRobe(idx);
+                        refreshShop();
+                    });
+                } else {
+                    if (equippedRobe === idx) {
+                        btn.textContent = `${robe.name} Equipped (click to unequip)`;
+                        btn.addEventListener('click', () => {
+                            equipRobe(-1);
+                            refreshShop();
+                        });
+                    } else {
+                        btn.textContent = `Equip ${robe.name} (+${robe.effect} Mag/10s)`;
+                        btn.addEventListener('click', () => {
+                            equipRobe(idx);
+                            refreshShop();
+                        });
+                    }
                 }
                 shopEl.appendChild(btn);
             });
@@ -487,7 +556,13 @@ window.addEventListener('DOMContentLoaded', async () => {
             `Reputation: ${scores.reputation} (Lv${rankIndex + 1} ${label})`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
-        canvasContainer.style.backgroundImage = `url('./images/background${rankIndex + 1}.png')`;
+        if (equippedRobe >= 0) {
+            const r = magicRobes[equippedRobe];
+            scoreEls.robe.textContent = `Magic Robe: ${r.name} (+${r.effect} Mag/10s)`;
+        } else {
+            scoreEls.robe.textContent = 'Magic Robe: None';
+        }
+        canvasContainer.style.backgroundImage = `url('background${rankIndex + 1}.png')`;
         if (typeof refreshShop === 'function') refreshShop();
         if (typeof saveState === 'function') saveState();
     }
