@@ -236,29 +236,33 @@ window.addEventListener('DOMContentLoaded', async () => {
         function refreshShop() {
             shopEl.innerHTML = '';
 
-            const bookBtn = document.createElement('button');
-            if (purchasedRecipeBooks >= recipeBooks.length) {
-                bookBtn.textContent = 'All Recipe Books Purchased';
-                bookBtn.disabled = true;
-            } else {
-                const book = recipeBooks[purchasedRecipeBooks];
-                bookBtn.textContent = `Buy Recipe Book ${purchasedRecipeBooks + 1} ($${book.cost})`;
-                bookBtn.title = getRecipesTooltip(book.recipes);
-                bookBtn.disabled = scores.money < book.cost;
-                bookBtn.addEventListener('click', () => {
-                    if (scores.money < book.cost) return;
-                    scores.money -= book.cost;
-                    Object.entries(book.recipes).forEach(([k, v]) => { mergeRules[k] = v; });
-                    purchasedRecipeBooks++;
-                    updateScores();
-                    refreshRecipeList();
-                    refreshShop();
-                });
-            }
-            shopEl.appendChild(bookBtn);
+            recipeBooks.forEach((book, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'shop-button';
+                if (idx < purchasedRecipeBooks) {
+                    btn.textContent = `Recipe Book ${idx + 1} Purchased`;
+                    btn.disabled = true;
+                    btn.classList.add('purchased');
+                } else {
+                    btn.textContent = `Buy Recipe Book ${idx + 1} ($${book.cost})`;
+                    btn.title = getRecipesTooltip(book.recipes);
+                    btn.disabled = scores.money < book.cost;
+                    btn.addEventListener('click', () => {
+                        if (scores.money < book.cost) return;
+                        scores.money -= book.cost;
+                        Object.entries(book.recipes).forEach(([k, v]) => { mergeRules[k] = v; });
+                        purchasedRecipeBooks = Math.max(purchasedRecipeBooks, idx + 1);
+                        updateScores();
+                        refreshRecipeList();
+                        refreshShop();
+                    });
+                }
+                shopEl.appendChild(btn);
+            });
 
             gatherSites.forEach((site, idx) => {
                 const btn = document.createElement('button');
+                btn.className = 'shop-button';
                 if (site.purchased) {
                     if (site.active) {
                         btn.textContent = `Gather Site ${idx + 1} Active (click to disable)`;
