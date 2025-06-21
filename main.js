@@ -329,8 +329,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 
     function updateScores() {
+        const rankIndex = getReputationIndex(scores.reputation);
         const label = getReputationLabel(scores.reputation);
-        scoreEls.reputation.textContent = `Reputation: ${scores.reputation} (${label})`;
+        scoreEls.reputation.textContent =
+            `Reputation: ${scores.reputation} (Lv${rankIndex + 1} ${label})`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
         const rankIndex = getReputationIndex(scores.reputation);
