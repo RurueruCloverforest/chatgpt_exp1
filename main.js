@@ -23,6 +23,31 @@ window.addEventListener('DOMContentLoaded', async () => {
           money: document.getElementById('score-money'),
       };
       const scores = { reputation: 0, magic: 0, money: 0 };
+
+      const reputationRanks = [
+          { threshold: 0, label: '無名の錬金術師' },
+          { threshold: 5, label: '見習い錬金術師' },
+          { threshold: 10, label: '町外れの調合士' },
+          { threshold: 20, label: '怪しい小屋の錬金術師' },
+          { threshold: 35, label: '地元で評判の錬金術師' },
+          { threshold: 50, label: '一流錬金術師' },
+          { threshold: 70, label: '名高い錬金マスター' },
+          { threshold: 100, label: '王国御用達錬金術師' },
+          { threshold: 150, label: '伝説の錬金術師' },
+          { threshold: 200, label: '錬金術の神髄' }
+      ];
+
+      function getReputationLabel(value) {
+          let label = reputationRanks[0].label;
+          for (const rank of reputationRanks) {
+              if (value >= rank.threshold) {
+                  label = rank.label;
+              } else {
+                  break;
+              }
+          }
+          return label;
+      }
       
         const itemListEl = document.getElementById('item-list');
         const recipeListEl = document.getElementById('recipe-list');
@@ -240,7 +265,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 
     function updateScores() {
-        scoreEls.reputation.textContent = `Reputation: ${scores.reputation}`;
+        const label = getReputationLabel(scores.reputation);
+        scoreEls.reputation.textContent = `Reputation: ${scores.reputation} (${label})`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
         if (typeof refreshShop === 'function') refreshShop();
