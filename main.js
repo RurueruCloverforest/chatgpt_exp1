@@ -11,8 +11,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     await app.init({
         width: canvasContainer.clientWidth,
         height: canvasContainer.clientHeight,
-        // Use a subtle gray with slight transparency instead of bright blue
-        backgroundColor: 0x808080,
+        // Darken the background image slightly with a translucent black overlay
+        backgroundColor: 0x000000,
         backgroundAlpha: 0.1,
     });
 
