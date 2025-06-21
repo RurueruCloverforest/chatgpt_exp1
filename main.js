@@ -573,7 +573,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (typeof saveState === 'function') saveState();
     }
 
-    function awardForCode(code, countDelta = 0) {
+    function awardForCode(code, countDelta = 0, x = endpointX, y = endpointY) {
         const reward = endpointRewards[code] || {};
         scores.money += reward.money || 0;
         scores.magic += reward.magic || 0;
@@ -585,6 +585,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         itemEarnings[code].magic += reward.magic || 0;
         itemEarnings[code].reputation += reward.reputation || 0;
         itemEarnings[code].count += countDelta;
+        showRewardPopup(code, x, y);
         updateScores();
         refreshRecipeList();
     }
@@ -664,6 +665,31 @@ window.addEventListener('DOMContentLoaded', async () => {
         // helper class which is always available. Using the shared instance
         // avoids creating lots of temporary objects.
         return PIXI.Color.shared.setValue(def.color).toNumber();
+    }
+
+    const floatingTexts = [];
+    const floatDistance = Math.min(app.renderer.width, app.renderer.height) / 4;
+
+    function createFloatingText(text, x, y, color) {
+        const style = new PIXI.TextStyle({ fontSize: 14, fill: color });
+        const t = new PIXI.Text(text, style);
+        t.anchor.set(0.5);
+        t.x = x;
+        t.y = y;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2;
+        floatingTexts.push({ t, startX: x, startY: y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed });
+        app.stage.addChild(t);
+    }
+
+    function showRewardPopup(code, x, y) {
+        const reward = endpointRewards[code] || {};
+        const parts = [];
+        if (reward.money) parts.push(`$${reward.money}`);
+        if (reward.magic) parts.push(`${reward.magic} Mag`);
+        if (reward.reputation) parts.push(`${reward.reputation} Rep`);
+        if (parts.length === 0) return;
+        createFloatingText(parts.join(' '), x, y, colorForCode(code));
     }
 
     function spawnItem(code = 'AA', x = app.renderer.width / 2, y = app.renderer.height / 2) {
@@ -754,7 +780,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             if (atEndpoint(item)) {
                 if (endpointRewards[item.code]) {
-                    awardForCode(item.code);
+                    awardForCode(item.code, 0, item.x, item.y);
                     app.stage.removeChild(item);
                     items.splice(i, 1);
                     refreshItemList();
@@ -798,7 +824,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         items.splice(i, 1);
 
                         if (isTerminalCode(resultCode)) {
-                            awardForCode(resultCode, 1);
+                            awardForCode(resultCode, 1, newX, newY);
                             checkRewards(resultCode);
                             refreshItemList();
                             refreshRewards();
@@ -818,6 +844,20 @@ window.addEventListener('DOMContentLoaded', async () => {
                         b.vx = tvx; b.vy = tvy;
                     }
                 }
+            }
+        }
+
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+            const ft = floatingTexts[i];
+            ft.t.x += ft.vx;
+            ft.t.y += ft.vy;
+            const dx = ft.t.x - ft.startX;
+            const dy = ft.t.y - ft.startY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            ft.t.alpha = 1 - dist / floatDistance;
+            if (dist >= floatDistance) {
+                app.stage.removeChild(ft.t);
+                floatingTexts.splice(i, 1);
             }
         }
     });
