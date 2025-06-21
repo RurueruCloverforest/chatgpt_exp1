@@ -6,8 +6,12 @@ body {
     text-align: center;
 }
 
+#game-wrapper {
+    display: flex;
+}
+
 #canvas-container {
-    width: 100vw;
+    flex: 1;
     height: 90vh;
     position: relative;
 }
@@ -24,4 +28,39 @@ body {
     pointer-events: none;
     z-index: 10;
     padding: 4px 0;
+}
+
+#info-pane {
+    width: 250px;
+    height: 90vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border-left: 1px solid #ccc;
+}
+
+.tab-buttons {
+    display: flex;
+    background: #eee;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 4px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background: #eee;
+}
+
+.tab-button.active {
+    background: #ddd;
+}
+
+.tab {
+    display: none;
+    padding: 4px;
+    text-align: left;
+}
+
+.tab.active {
+    display: block;
 }

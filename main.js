@@ -15,12 +15,32 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('canvas-container').appendChild(app.canvas);
 
-    const scoreEls = {
-        reputation: document.getElementById('score-reputation'),
-        magic: document.getElementById('score-magic'),
-        money: document.getElementById('score-money'),
-    };
-    const scores = { reputation: 0, magic: 0, money: 0 };
+      const scoreEls = {
+          reputation: document.getElementById('score-reputation'),
+          magic: document.getElementById('score-magic'),
+          money: document.getElementById('score-money'),
+      };
+      const scores = { reputation: 0, magic: 0, money: 0 };
+      
+      const itemListEl = document.getElementById('item-list');
+
+      function refreshItemList() {
+          itemListEl.innerHTML = '';
+          for (const item of items) {
+              const div = document.createElement('div');
+              div.textContent = `#${item.id} ${item.code}`;
+              itemListEl.appendChild(div);
+          }
+      }
+
+      document.querySelectorAll('.tab-button').forEach(btn => {
+          btn.addEventListener('click', () => {
+              document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+              document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+              btn.classList.add('active');
+              document.getElementById(btn.dataset.tab).classList.add('active');
+          });
+      });
 
     const endpointRadius = 30;
     const endpointX = app.renderer.width - endpointRadius - 20;
@@ -114,6 +134,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         app.stage.addChild(container);
         items.push(container);
+        refreshItemList();
     }
 
     function isColliding(a, b) {
@@ -165,6 +186,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 updateScores();
                 app.stage.removeChild(item);
                 items.splice(i, 1);
+                refreshItemList();
                 continue;
             }
         }
