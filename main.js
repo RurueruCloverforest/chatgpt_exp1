@@ -46,10 +46,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     function colorForCode(code) {
         const def = itemMap[code];
-        // PIXI v8 no longer exposes `Color.string2hex`, but the util helper
-        // `PIXI.utils.string2hex` is still available to convert a color string
-        // like "#ff00ff" into a numeric hex value.
-        return PIXI.utils.string2hex(def.color);
+        // Recent versions of PixiJS removed the `utils` export where
+        // `string2hex` used to live. Instead we can rely on the `Color`
+        // helper class which is always available. Using the shared instance
+        // avoids creating lots of temporary objects.
+        return PIXI.Color.shared.setValue(def.color).toNumber();
     }
 
     function spawnItem(code = 'AA', x = app.renderer.width / 2, y = app.renderer.height / 2) {
