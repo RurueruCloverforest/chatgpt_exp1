@@ -33,11 +33,29 @@ body {
 }
 
 #info-pane {
+    position: relative;
     width: 250px;
     height: 90vh;
     overflow-y: auto;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.8);
     border-left: 1px solid #ccc;
+}
+
+#info-bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#info-pane .tab-buttons,
+#info-pane .tab {
+    position: relative;
+    z-index: 1;
 }
 
 .tab-buttons {
