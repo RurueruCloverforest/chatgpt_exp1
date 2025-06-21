@@ -413,6 +413,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         'JJ': { money: 4, reputation: 2 },
         'KK': { money: 2, reputation: 1 },
         'LL': { magic: 2, reputation: 1 },
+        'MM': { money: 3, reputation: 2 },
+        'NN': { magic: 3, reputation: 2 },
         'OO': { magic: 5, reputation: 3 },
         'PP': { money: 5, reputation: 4 },
         'QQ': { money: 6, reputation: 4 },
