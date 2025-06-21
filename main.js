@@ -12,6 +12,20 @@ window.addEventListener('DOMContentLoaded', async () => {
     const itemRadius = 20;
     const itemSpeed = 2;
 
+    const repulsionRadius = 100;
+    const repulsionStrength = 0.2;
+    const mouse = { x: 0, y: 0, active: false };
+
+    app.canvas.addEventListener('mousemove', (e) => {
+        const rect = app.canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+    });
+
+    app.canvas.addEventListener('mousedown', () => { mouse.active = true; });
+    app.canvas.addEventListener('mouseup', () => { mouse.active = false; });
+    app.canvas.addEventListener('mouseleave', () => { mouse.active = false; });
+
     function colorForLevel(level) {
         const colors = [0xff5555, 0x55ff55, 0x5555ff, 0xffff55, 0xff55ff, 0x55ffff];
         return colors[(level - 1) % colors.length];
@@ -39,6 +53,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     app.ticker.add(() => {
         for (const item of items) {
+            if (mouse.active) {
+                const dx = item.x - mouse.x;
+                const dy = item.y - mouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < repulsionRadius && dist > 0) {
+                    const force = (1 - dist / repulsionRadius) * repulsionStrength;
+                    item.vx += (dx / dist) * force;
+                    item.vy += (dy / dist) * force;
+                }
+            }
+
             item.x += item.vx;
             item.y += item.vy;
 
