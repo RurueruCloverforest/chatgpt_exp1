@@ -48,6 +48,18 @@ window.addEventListener('DOMContentLoaded', async () => {
           }
           return label;
       }
+
+      function getReputationIndex(value) {
+          let index = 0;
+          for (let i = 0; i < reputationRanks.length; i++) {
+              if (value >= reputationRanks[i].threshold) {
+                  index = i;
+              } else {
+                  break;
+              }
+          }
+          return index;
+      }
       
         const itemListEl = document.getElementById('item-list');
         const recipeListEl = document.getElementById('recipe-list');
@@ -109,13 +121,32 @@ window.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        const recipeBookCost = 10;
-        const extraRecipes = {
-            'AA+EE': 'GG',
-            'BB+FF': 'HH'
-        };
-        function getExtraRecipesTooltip() {
-            return Object.entries(extraRecipes).map(([k, v]) => {
+        const recipeBooks = [
+            {
+                cost: 10,
+                recipes: {
+                    'AA+EE': 'GG',
+                    'BB+FF': 'HH'
+                }
+            },
+            {
+                cost: 20,
+                recipes: {
+                    'GG+HH': 'II',
+                    'DD+FF': 'JJ'
+                }
+            },
+            {
+                cost: 30,
+                recipes: {
+                    'MM+NN': 'OO',
+                    'II+JJ': 'PP'
+                }
+            }
+        ];
+
+        function getRecipesTooltip(recipes) {
+            return Object.entries(recipes).map(([k, v]) => {
                 const [a, b] = k.split('+');
                 const aName = itemMap[a]?.name || a;
                 const bName = itemMap[b]?.name || b;
@@ -123,12 +154,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return `${aName} [${a}] + ${bName} [${b}] -> ${resultName} [${v}]`;
             }).join('\n');
         }
-        let recipeBookPurchased = false;
 
-        const gatherItemCodes = ['KK', 'LL'];
-        const gatherRepRequirement = 5;
-        let gatherSitePurchased = false;
-        let gatherIntervalId = null;
+        let purchasedRecipeBooks = 0;
+
+        const gatherSites = [
+            { repRequirement: 5, itemCodes: ['KK', 'LL'], interval: 3000, purchased: false, active: false, timerId: null },
+            { repRequirement: 20, itemCodes: ['MM', 'NN'], interval: 4000, purchased: false, active: false, timerId: null }
+        ];
 
         const SAVE_KEY = 'mergeGameState';
         let cookieUpdatesEnabled = true;
@@ -137,8 +169,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (!cookieUpdatesEnabled) return;
             const data = {
                 scores,
-                recipeBookPurchased,
-                gatherSitePurchased
+                purchasedRecipeBooks,
+                gatherSites: gatherSites.map(site => ({
+                    purchased: site.purchased,
+                    active: site.active
+                }))
             };
             document.cookie = `${SAVE_KEY}=` +
                 encodeURIComponent(JSON.stringify(data)) +
@@ -155,77 +190,104 @@ window.addEventListener('DOMContentLoaded', async () => {
                     scores.magic = data.scores.magic || 0;
                     scores.money = data.scores.money || 0;
                 }
-                if (data.recipeBookPurchased) {
-                    recipeBookPurchased = true;
-                    Object.entries(extraRecipes).forEach(([k, v]) => { mergeRules[k] = v; });
+                if (typeof data.purchasedRecipeBooks === 'number') {
+                    purchasedRecipeBooks = Math.min(data.purchasedRecipeBooks, recipeBooks.length);
+                    for (let i = 0; i < purchasedRecipeBooks; i++) {
+                        Object.entries(recipeBooks[i].recipes).forEach(([k, v]) => { mergeRules[k] = v; });
+                    }
                 }
-                if (data.gatherSitePurchased) {
-                    gatherSitePurchased = true;
-                    startGatherSite();
+                if (Array.isArray(data.gatherSites)) {
+                    data.gatherSites.forEach((siteData, idx) => {
+                        const site = gatherSites[idx];
+                        if (!site) return;
+                        site.purchased = !!siteData.purchased;
+                        if (site.purchased && siteData.active) {
+                            startGatherSite(idx);
+                        }
+                    });
                 }
             } catch (e) {
                 console.error('Failed to load saved state', e);
             }
         }
 
-        function startGatherSite() {
-            if (gatherIntervalId) return;
-            gatherIntervalId = setInterval(() => {
-                spawnItem(randomGatherCode());
-            }, 3000);
+        function startGatherSite(index) {
+            const site = gatherSites[index];
+            if (!site || site.timerId) return;
+            site.timerId = setInterval(() => {
+                spawnItem(randomGatherCode(site));
+            }, site.interval);
+            site.purchased = true;
+            site.active = true;
         }
 
-        function stopGatherSite() {
-            if (!gatherIntervalId) return;
-            clearInterval(gatherIntervalId);
-            gatherIntervalId = null;
+        function stopGatherSite(index) {
+            const site = gatherSites[index];
+            if (!site || !site.timerId) return;
+            clearInterval(site.timerId);
+            site.timerId = null;
+            site.active = false;
         }
 
-        function randomGatherCode() {
-            return gatherItemCodes[Math.floor(Math.random() * gatherItemCodes.length)];
+        function randomGatherCode(site) {
+            return site.itemCodes[Math.floor(Math.random() * site.itemCodes.length)];
         }
 
         function refreshShop() {
             shopEl.innerHTML = '';
-            const btn = document.createElement('button');
-            btn.textContent = recipeBookPurchased ? 'Recipe Book Purchased' : `Buy Recipe Book ($${recipeBookCost})`;
-            if (!recipeBookPurchased) {
-                btn.title = getExtraRecipesTooltip();
-            }
-            btn.disabled = recipeBookPurchased || scores.money < recipeBookCost;
-            btn.addEventListener('click', () => {
-                if (recipeBookPurchased || scores.money < recipeBookCost) return;
-                scores.money -= recipeBookCost;
-                Object.entries(extraRecipes).forEach(([k, v]) => { mergeRules[k] = v; });
-                recipeBookPurchased = true;
-                updateScores();
-                refreshRecipeList();
-                refreshShop();
-            });
-            shopEl.appendChild(btn);
 
-            const gatherBtn = document.createElement('button');
-            if (gatherSitePurchased) {
-                gatherBtn.textContent = 'Gathering Site Active (click to disable)';
-                gatherBtn.disabled = false;
-                gatherBtn.addEventListener('click', () => {
-                    gatherSitePurchased = false;
-                    stopGatherSite();
-                    refreshShop();
-                    if (typeof saveState === 'function') saveState();
-                });
+            const bookBtn = document.createElement('button');
+            if (purchasedRecipeBooks >= recipeBooks.length) {
+                bookBtn.textContent = 'All Recipe Books Purchased';
+                bookBtn.disabled = true;
             } else {
-                gatherBtn.textContent = `Buy Gathering Site (requires ${gatherRepRequirement} Rep)`;
-                gatherBtn.disabled = scores.reputation < gatherRepRequirement;
-                gatherBtn.addEventListener('click', () => {
-                    if (gatherSitePurchased || scores.reputation < gatherRepRequirement) return;
-                    gatherSitePurchased = true;
-                    startGatherSite();
+                const book = recipeBooks[purchasedRecipeBooks];
+                bookBtn.textContent = `Buy Recipe Book ${purchasedRecipeBooks + 1} ($${book.cost})`;
+                bookBtn.title = getRecipesTooltip(book.recipes);
+                bookBtn.disabled = scores.money < book.cost;
+                bookBtn.addEventListener('click', () => {
+                    if (scores.money < book.cost) return;
+                    scores.money -= book.cost;
+                    Object.entries(book.recipes).forEach(([k, v]) => { mergeRules[k] = v; });
+                    purchasedRecipeBooks++;
+                    updateScores();
+                    refreshRecipeList();
                     refreshShop();
-                    if (typeof saveState === 'function') saveState();
                 });
             }
-            shopEl.appendChild(gatherBtn);
+            shopEl.appendChild(bookBtn);
+
+            gatherSites.forEach((site, idx) => {
+                const btn = document.createElement('button');
+                if (site.purchased) {
+                    if (site.active) {
+                        btn.textContent = `Gather Site ${idx + 1} Active (click to disable)`;
+                        btn.addEventListener('click', () => {
+                            stopGatherSite(idx);
+                            refreshShop();
+                            if (typeof saveState === 'function') saveState();
+                        });
+                    } else {
+                        btn.textContent = `Gather Site ${idx + 1} Inactive (click to enable)`;
+                        btn.addEventListener('click', () => {
+                            startGatherSite(idx);
+                            refreshShop();
+                            if (typeof saveState === 'function') saveState();
+                        });
+                    }
+                    btn.disabled = false;
+                } else {
+                    btn.textContent = `Buy Gather Site ${idx + 1} (requires ${site.repRequirement} Rep)`;
+                    btn.disabled = scores.reputation < site.repRequirement;
+                    btn.addEventListener('click', () => {
+                        if (scores.reputation < site.repRequirement) return;
+                        startGatherSite(idx);
+                        refreshShop();
+                        if (typeof saveState === 'function') saveState();
+                    });
+                }
+                shopEl.appendChild(btn);
+            });
         }
 
       document.querySelectorAll('.tab-button').forEach(btn => {
@@ -261,7 +323,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         'II': { magic: 4, reputation: 2 },
         'JJ': { money: 4, reputation: 2 },
         'KK': { money: 2, reputation: 1 },
-        'LL': { magic: 2, reputation: 1 }
+        'LL': { magic: 2, reputation: 1 },
+        'OO': { magic: 5, reputation: 3 },
+        'PP': { money: 5, reputation: 4 }
     };
 
     function updateScores() {
@@ -269,6 +333,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         scoreEls.reputation.textContent = `Reputation: ${scores.reputation} (${label})`;
         scoreEls.magic.textContent = `Magic: ${scores.magic}`;
         scoreEls.money.textContent = `Money: ${scores.money}`;
+        const rankIndex = getReputationIndex(scores.reputation);
+        canvasContainer.style.backgroundImage = `url('background${rankIndex + 1}.png')`;
         if (typeof refreshShop === 'function') refreshShop();
         if (typeof saveState === 'function') saveState();
     }
@@ -314,7 +380,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const mergeCosts = {
         'GG+GG': 2,
-        'HH+HH': 3
+        'HH+HH': 3,
+        'MM+NN': 2,
+        'II+JJ': 4
     };
 
     loadState();

@@ -10,5 +10,9 @@
   {"id":9, "code":"II", "name":"Faerie Feather", "color":"#dd4477"},
   {"id":10, "code":"JJ", "name":"Dragon Scale", "color":"#77dd44"},
   {"id":11, "code":"KK", "name":"Pixie Wing", "color":"#ff8800"},
-  {"id":12, "code":"LL", "name":"Luminous Pearl", "color":"#00aaff"}
+  {"id":12, "code":"LL", "name":"Luminous Pearl", "color":"#00aaff"},
+  {"id":13, "code":"MM", "name":"Glowing Crystal", "color":"#cc33ff"},
+  {"id":14, "code":"NN", "name":"Ancient Bark", "color":"#33cc33"},
+  {"id":15, "code":"OO", "name":"Mystic Flame", "color":"#ffcc33"},
+  {"id":16, "code":"PP", "name":"Arcane Crown", "color":"#cc6633"}
 ]

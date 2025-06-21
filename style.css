@@ -16,7 +16,7 @@ body {
     flex: 1;
     height: 90vh;
     position: relative;
-    background-image: url('./images/background1.png');
+    /* Background image will be set dynamically based on reputation rank */
     background-size: cover;
     background-position: center;
 }
