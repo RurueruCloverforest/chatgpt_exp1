@@ -117,7 +117,13 @@ window.addEventListener('DOMContentLoaded', async () => {
                 byResult[result].push({ a, b, key });
             }
 
-            Object.keys(byResult).forEach(result => {
+            // Include items that have definitions but no recipes
+            Object.keys(itemMap).forEach(code => {
+                if (!byResult[code]) {
+                    byResult[code] = [];
+                }
+            });
+            Object.keys(byResult).sort().forEach(result => {
                 const section = document.createElement('div');
                 section.className = 'recipe-section';
 
@@ -128,26 +134,33 @@ window.addEventListener('DOMContentLoaded', async () => {
                 header.textContent = `${def.name} [${def.code}]${earnTxt}`;
                 section.appendChild(header);
 
-                byResult[result].forEach(({ a, b, key }) => {
+                if (byResult[result].length === 0) {
                     const line = document.createElement('div');
-                    const cost = mergeCosts[key] || 0;
-                    const reward = endpointRewards[result] || {};
-                    const rewardParts = [];
-                    if (reward.money) rewardParts.push(`$${reward.money}`);
-                    if (reward.magic) rewardParts.push(`${reward.magic} Mag`);
-                    if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
-                    const costTxt = cost ? ` Cost: ${cost} Mag` : '';
-                    const finalFlag = isTerminalCode(result) ? ' (Final)' : '';
-                    const aName = itemMap[a]?.name || a;
-                    const bName = itemMap[b]?.name || b;
-                    let txt = `${aName} [${a}] + ${bName} [${b}] -> ${def.name}${finalFlag}`;
-                    if (rewardParts.length || cost) {
-                        txt += ` (Reward: ${rewardParts.join(', ')}${cost ? ';' + costTxt : ''})`;
-                    }
-                    line.textContent = txt;
+                    line.textContent = 'No known recipe';
                     line.className = 'recipe-line';
                     section.appendChild(line);
-                });
+                } else {
+                    byResult[result].forEach(({ a, b, key }) => {
+                        const line = document.createElement('div');
+                        const cost = mergeCosts[key] || 0;
+                        const reward = endpointRewards[result] || {};
+                        const rewardParts = [];
+                        if (reward.money) rewardParts.push(`$${reward.money}`);
+                        if (reward.magic) rewardParts.push(`${reward.magic} Mag`);
+                        if (reward.reputation) rewardParts.push(`${reward.reputation} Rep`);
+                        const costTxt = cost ? ` Cost: ${cost} Mag` : '';
+                        const finalFlag = isTerminalCode(result) ? ' (Final)' : '';
+                        const aName = itemMap[a]?.name || a;
+                        const bName = itemMap[b]?.name || b;
+                        let txt = `${aName} [${a}] + ${bName} [${b}] -> ${def.name}${finalFlag}`;
+                        if (rewardParts.length || cost) {
+                            txt += ` (Reward: ${rewardParts.join(', ')}${cost ? ';' + costTxt : ''})`;
+                        }
+                        line.textContent = txt;
+                        line.className = 'recipe-line';
+                        section.appendChild(line);
+                    });
+                }
 
                 recipeListEl.appendChild(section);
             });
